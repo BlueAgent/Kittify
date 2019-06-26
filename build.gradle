@@ -55,8 +55,12 @@ dependencies {
     deobfCompile "mezz.jei:jei_${mc_version}:${jei_version}:api"
     // at runtime, use the full JEI jar
     runtime "mezz.jei:jei_${mc_version}:${jei_version}"
+    //deobdCompile myResolver.resolve("${grimoireofgaia_projectid}", "${grimoireofgaia_fileid}")
+    //deobfCompile myResolver.resolve("${mca_projectid}", "${mca_fileid}")
     //deobfCompile myResolver.resolve("${millenair_projectid}", "${millenair_fileid}")
     //deobfCompile myResolver.resolve("${nevermine_projectid}", "${nevermine_fileid}")
+    deobfCompile name: "GrimoireOfGaia3-${mc_version}-${grimoireofgaia_version}"
+    deobfCompile name: "MCA-${mca_mcversion}-${mca_version}-universal"
     deobfCompile name: "millenaire-${mc_version}-${millenair_version}"
     deobfCompile name: "AoA3-${nevermine_version}"
 }
