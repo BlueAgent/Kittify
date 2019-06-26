@@ -1,2 +1,3 @@
 # Clientside Commands
 commands.ckittify.tps.usage=/ckittify tps <tps>
+commands.ckittify.tps.success=Clientside TPS set to %.1f (%.1f ms)

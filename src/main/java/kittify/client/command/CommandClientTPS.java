@@ -24,6 +24,9 @@ public class CommandClientTPS extends CommandBase implements IKittifyClientComma
         if (args.length != 1) {
             throw new WrongUsageException("commands.ckittify.tps.usage");
         }
-        Minecraft.getMinecraft().timer.tickLength = (float) (1000.0 / parseDouble(args[0], 1.0, 200.0));
+        double tps = parseDouble(args[0], 1.0, 200.0);
+        double delay = 1000.0 / tps;
+        Minecraft.getMinecraft().timer.tickLength = (float) delay;
+        sender.sendMessage(new TextComponentTranslation("commands.ckittify.tps.success", tps, delay));
     }
 }
