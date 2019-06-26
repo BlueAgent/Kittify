@@ -59,9 +59,17 @@ dependencies {
     //deobfCompile myResolver.resolve("${mca_projectid}", "${mca_fileid}")
     //deobfCompile myResolver.resolve("${millenair_projectid}", "${millenair_fileid}")
     //deobfCompile myResolver.resolve("${nevermine_projectid}", "${nevermine_fileid}")
+
+    // Grimoire of Gaia
     deobfCompile name: "GrimoireOfGaia3-${mc_version}-${grimoireofgaia_version}"
-    deobfCompile name: "MCA-${mca_mcversion}-${mca_version}-universal"
+
+    // Millenaire
     deobfCompile name: "millenaire-${mc_version}-${millenair_version}"
+
+    // Minecraft Comes Alive
+    deobfCompile name: "MCA-${mc_version}-${mca_version}-universal"
+
+    // Nevermine (Advent of Ascension)
     deobfCompile name: "AoA3-${nevermine_version}"
 }
 

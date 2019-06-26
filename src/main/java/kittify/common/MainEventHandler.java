@@ -1,6 +1,7 @@
 package kittify.common;
 
 import kittify.Kittify;
+import kittify.common.module.EntityProtection;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,6 +18,18 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 public class MainEventHandler {
 
     public static final int SWING_TICKS = Integer.MAX_VALUE / 2;
+    public static long debug_timing = 0;
+
+//    @SubscribeEvent
+//    public static void onServerTick(TickEvent.ServerTickEvent e) {
+//        if(e.phase != TickEvent.Phase.END) return;
+//        int tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
+//        if (tick % (20*10) == 0) {
+//            double yay = debug_timing / (20. * 10.) / 1000.;
+//            System.out.println(yay + " ms/t");
+//            debug_timing = 0;
+//        }
+//    }
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent e) {
@@ -55,6 +68,12 @@ public class MainEventHandler {
     }
 
     public static EntityLivingBase onSetAttackTarget(EntityLiving attacker, EntityLivingBase target) {
+        if (target == null) return null;
+        // EntityProtection
+        if (EntityProtection.shouldPreventTargeting(attacker, target)) {
+            return null;
+        }
+        // Tamed Protection
         if (target instanceof EntityTameable) {
             //return ((EntityTameable) target).getOwner();
             return null;
@@ -66,7 +85,7 @@ public class MainEventHandler {
     public static void onSetAttackTarget(LivingSetAttackTargetEvent e) {
         EntityLivingBase baseAttacker = e.getEntityLiving();
 
-        if(baseAttacker instanceof EntityLiving) {
+        if (baseAttacker instanceof EntityLiving) {
             EntityLiving attacker = (EntityLiving) baseAttacker;
 
             EntityLivingBase baseTarget = e.getTarget();
