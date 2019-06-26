@@ -1,14 +1,10 @@
 package kittify;
 
-import kittify.common.compat.GrimoireOfGaia;
-import kittify.common.compat.Millenaire;
-import kittify.common.compat.MinecraftComesAlive;
-import kittify.common.compat.Nevermine;
-import kittify.common.module.EntityProtection;
-import net.minecraftforge.fml.common.Loader;
+import kittify.common.CommonProxy;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -37,6 +33,8 @@ public class Kittify {
     public static final String NEVERMINE_MODID = "aoa3";
 
     public static Logger log = LogManager.getLogger(MOD_ID);
+    @SidedProxy(clientSide = "kittify.client.ClientProxy", serverSide = "kittify.common.CommonProxy")
+    public static CommonProxy proxy = null;
     @Instance(MOD_ID)
     public static Kittify INSTANCE;
 
@@ -44,21 +42,18 @@ public class Kittify {
     public void preInit(FMLPreInitializationEvent event) {
         Kittify.log.info(String.format("Pre-Init %s v%s", MOD_ID, MOD_VERSION));
         Kittify.log = event.getModLog();
-
-        if (Loader.isModLoaded(GRIMOIRE_OF_GAIA_MODID)) GrimoireOfGaia.init();
-        if (Loader.isModLoaded(MILLENAIRE_MODID)) Millenaire.init();
-        if (Loader.isModLoaded(MCA_MODID)) MinecraftComesAlive.init();
-        if (Loader.isModLoaded(NEVERMINE_MODID)) Nevermine.init();
+        proxy.preInit(event);
     }
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
         Kittify.log.info(String.format("Init %s v%s", MOD_ID, MOD_VERSION));
+        proxy.init(event);
     }
 
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         Kittify.log.info(String.format("Post-Init %s v%s", MOD_ID, MOD_VERSION));
-        EntityProtection.rebuildVillagerClasses();
+        proxy.postInit(event);
     }
 }
