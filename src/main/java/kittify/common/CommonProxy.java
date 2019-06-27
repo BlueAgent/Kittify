@@ -1,5 +1,6 @@
 package kittify.common;
 
+import kittify.common.command.CommandKittify;
 import kittify.common.compat.GrimoireOfGaia;
 import kittify.common.compat.Millenaire;
 import kittify.common.compat.MinecraftComesAlive;
@@ -9,6 +10,7 @@ import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 import static kittify.Kittify.*;
 
@@ -25,5 +27,9 @@ public class CommonProxy {
 
     public void postInit(FMLPostInitializationEvent event) {
         EntityProtection.rebuildVillagerClasses();
+    }
+
+    public void serverStarting(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandKittify());
     }
 }

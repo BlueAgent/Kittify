@@ -1,3 +1,9 @@
 # Clientside Commands
-commands.ckittify.tps.usage=/ckittify tps <tps>
-commands.ckittify.tps.success=Clientside TPS set to %.1f (%.1f ms)
+commands.ckittify.usage=/ckittify <cmd/help> [args] - Client Kittify commands
+commands.ckittify.tps.usage=/ckittify tps <tps> - Set client TPS
+commands.ckittify.tps.success=Client TPS set to %.1f (%.1f ms)
+
+# Serverside Command
+commands.kittify.usage=/kittify <cmd> [args] - Kittify commands
+commands.kittify.tps.usage=/kittify tps <tps> - Set server TPS
+commands.kittify.tps.success=Server TPS set to %.1f (%.1f ms using mod %.1f ms per 50 ms)

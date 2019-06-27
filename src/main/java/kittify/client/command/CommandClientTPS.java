@@ -16,7 +16,7 @@ public class CommandClientTPS extends CommandBase implements IKittifyClientComma
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "Sets the clientside tps";
+        return "commands.ckittify.tps.usage";
     }
 
     @Override
