@@ -2,11 +2,13 @@ package kittify.common.compat;
 
 import kittify.Kittify;
 import kittify.common.module.EntityProtection;
-import mca.entity.EntityVillagerMCA;
 
-public class MinecraftComesAlive {
-    public static void init() {
-        Kittify.log.info("Minecraft Comes Alive is installed");
-        EntityProtection.VILLAGER_BASE_CLASSES.add(EntityVillagerMCA.class);
+public class MinecraftComesAlive extends CompatBase {
+    public MinecraftComesAlive() {
+        super(Kittify.MCA_MODID, "Minecraft Comes Alive");
+    }
+
+    public void init() {
+        EntityProtection.addVillagerClass("mca.entity.EntityVillagerMCA");
     }
 }

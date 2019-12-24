@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @Mod.EventBusSubscriber(modid = Kittify.MOD_ID)
-public class MainEventHandler {
+public class CommonEventHandler {
 
     public static final int SWING_TICKS = Integer.MAX_VALUE / 2;
     public static long debug_timing = 0;
@@ -39,7 +39,7 @@ public class MainEventHandler {
         }
     }
 
-    public static boolean shouldSourceHurtTamable(EntityTameable entityTameable, DamageSource damageSource, float amount) {
+    public static boolean shouldSourceHurtTamed(EntityTameable entityTameable, DamageSource damageSource, float amount) {
         if (!entityTameable.isTamed()) return true;
 
         // Creative damage
@@ -59,9 +59,9 @@ public class MainEventHandler {
         DamageSource damageSource = e.getSource();
         // Stop ocelots, cats, wolves or dogs from being hurt by non-players or creative damage
         EntityLivingBase entityLivingBase = e.getEntityLiving();
-        if (entityLivingBase instanceof EntityTameable) {
+        if (entityLivingBase instanceof EntityTameable && ((EntityTameable) entityLivingBase).isTamed()) {
             EntityTameable entityTameable = (EntityTameable) entityLivingBase;
-            if (!shouldSourceHurtTamable(entityTameable, damageSource, amount)) {
+            if (!shouldSourceHurtTamed(entityTameable, damageSource, amount)) {
                 e.setCanceled(true);
             }
         }
@@ -74,7 +74,7 @@ public class MainEventHandler {
             return null;
         }
         // Tamed Protection
-        if (target instanceof EntityTameable) {
+        if (target instanceof EntityTameable && ((EntityTameable) target).isTamed()) {
             //return ((EntityTameable) target).getOwner();
             return null;
         }

@@ -42,7 +42,7 @@ public class CommandTPS extends CommandBase {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (args.length != 1) {
-            throw new WrongUsageException("commands.kittify.tps.usage");
+            throw new WrongUsageException(this.getUsage(sender));
         }
         double tps = parseDouble(args[0], 1.0, 200.0);
         double delay = 1000.0 / tps;

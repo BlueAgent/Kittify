@@ -6,6 +6,7 @@ import net.minecraftforge.server.command.CommandTreeHelp;
 
 public class CommandKittify extends CommandTreeBase {
     public CommandKittify() {
+        //addSubcommand(new CommandFindBiome()); // TODO: Implement
         addSubcommand(new CommandTPS());
         addSubcommand(new CommandTreeHelp(this));
     }

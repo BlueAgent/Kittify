@@ -1,5 +1,7 @@
 package kittify.common.module;
 
+import kittify.Kittify;
+import kittify.common.util.ReflectionUtil;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -40,5 +42,25 @@ public class EntityProtection {
             return true;
         }
         return false;
+    }
+
+    public static void addVillagerClass(String className) {
+        Class villagerBaseClass = ReflectionUtil.getClassOrNull(className);
+        if (villagerBaseClass != null) {
+            Kittify.log.info("Added Villager Protection to " + className);
+            EntityProtection.VILLAGER_BASE_CLASSES.add(villagerBaseClass);
+        } else {
+            Kittify.log.error("Failed to find " + className + ". Will not have Villager Protection!");
+        }
+    }
+
+    public static void addVillagerAttackerClass(String className) {
+        Class villagerAttackerBaseClass = ReflectionUtil.getClassOrNull(className);
+        if (villagerAttackerBaseClass != null) {
+            Kittify.log.info("Added Villager Attacker " + className);
+            EntityProtection.VILLAGER_ATTACKER_BASE_CLASSES.add(villagerAttackerBaseClass);
+        } else {
+            Kittify.log.error("Failed to find " + className + ". Will not ignore villagers!");
+        }
     }
 }
