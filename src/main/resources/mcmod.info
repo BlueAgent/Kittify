@@ -9,7 +9,7 @@
   "updateUrl": "",
   "authorList": ["BlueAgent"],
   "credits": "Kittens and Cats",
-  "logoFile": "",
+  "logoFile": "assets/kittify/logo.png",
   "screenshots": [],
   "dependencies": []
 }
