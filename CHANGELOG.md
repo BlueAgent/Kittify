@@ -1,4 +1,4 @@
-## [0.0.2] - TBA
+## [0.0.3] - 2020-01-01
 - Initial release of Kittify for Minecraft 1.12.2
 - Prevent tamed mobs from being targeted
 - Prevent tamed mobs from being damaged by anything except creative damage or sneaking players
