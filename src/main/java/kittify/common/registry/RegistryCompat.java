@@ -3,6 +3,7 @@ package kittify.common.registry;
 import com.google.common.collect.ImmutableMap;
 import kittify.Kittify;
 import kittify.common.compat.*;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 
 public class RegistryCompat {
@@ -11,6 +12,7 @@ public class RegistryCompat {
             .put(new Millenaire())
             .put(new MinecraftComesAlive())
             .put(new Nevermine())
+            .put(new AngelOfVengeance())
             .build();
 
     public static void init() {
@@ -21,6 +23,7 @@ public class RegistryCompat {
             if (Loader.isModLoaded(module.getId())) {
                 Kittify.log.info("Loading " + module.getName() + " compatibility...");
                 module.init();
+                MinecraftForge.EVENT_BUS.register(module);
                 Kittify.log.info("Finished loading " + module.getName() + " compatibility");
                 loaded++;
             } else {

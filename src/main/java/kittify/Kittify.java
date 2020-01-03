@@ -30,8 +30,9 @@ public class Kittify {
 
     public static final String GRIMOIRE_OF_GAIA_MODID = "grimoireofgaia";
     public static final String MILLENAIRE_MODID = "millenaire";
-    public static final String MCA_MODID = "mca";
+    public static final String MINECRAFT_COMES_ALIVE_MODID = "mca";
     public static final String NEVERMINE_MODID = "aoa3";
+    public static final String ANGEL_OF_VENGEANCE_MODID = "aov";
 
     public static Logger log = LogManager.getLogger(MOD_ID);
     @SidedProxy(clientSide = "kittify.client.ClientProxy", serverSide = "kittify.common.CommonProxy")

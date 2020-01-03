@@ -4,6 +4,10 @@ This mod tweaks various things that my friends and I wanted to.
 
 There are no configs right now but might add them or just make the project open source at some point.
 
+## Player Changes
+- Removed Attack Cooldown
+- Angel of Vengeance: Restores all ability charges over 10 minutes
+
 ## Mob Changes
 ### Villager Protection
 Prevents villagers from being targeted by powerful mobs

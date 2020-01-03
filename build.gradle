@@ -71,6 +71,10 @@ dependencies {
 
     // Nevermine (Advent of Ascension)
     deobfCompile name: "AoA3-${nevermine_version}"
+
+    // Angel of Vengeance
+    deobfCompile name: "TamModized-${mc_version}-${tammodized_version}"
+    deobfCompile name: "AoV-${mc_version_short}-${aov_version}"
 }
 
 processResources {

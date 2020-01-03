@@ -5,7 +5,7 @@ import kittify.common.module.EntityProtection;
 
 public class MinecraftComesAlive extends CompatBase {
     public MinecraftComesAlive() {
-        super(Kittify.MCA_MODID, "Minecraft Comes Alive");
+        super(Kittify.MINECRAFT_COMES_ALIVE_MODID, "Minecraft Comes Alive");
     }
 
     public void init() {
