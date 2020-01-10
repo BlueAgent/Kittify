@@ -2,14 +2,21 @@ package kittify.common;
 
 import kittify.Kittify;
 import kittify.common.module.EntityProtection;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.DamageSource;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
+import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -94,6 +101,28 @@ public class CommonEventHandler {
             if (baseTarget != newTarget) {
                 attacker.setAttackTarget(newTarget);
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void nicerCreeperExplosions(ExplosionEvent.Detonate e) {
+        final Explosion explosion = e.getExplosion();
+        if (explosion.getExplosivePlacedBy() instanceof EntityCreeper) {
+            final World world = e.getWorld();
+            // Reference: net.minecraft.world.Explosion.doExplosionB
+            // Explode non-TileEntities without loss
+            explosion.getAffectedBlockPositions().forEach(blockPos -> {
+                final IBlockState state = world.getBlockState(blockPos);
+                final Block block = state.getBlock();
+                if (state.getMaterial() == Material.AIR) return;
+                if (!block.canDropFromExplosion(explosion)) return;
+                if (block.hasTileEntity(state) || world.getTileEntity(blockPos) != null) return;
+                block.dropBlockAsItemWithChance(world, blockPos, state, 1.0f, 0);
+                block.onBlockExploded(world, blockPos, explosion);
+            });
+            explosion.clearAffectedBlockPositions();
+            // No damage to non-living entities
+            e.getAffectedEntities().removeIf(entity -> !(entity instanceof EntityLiving));
         }
     }
 }
