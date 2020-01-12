@@ -29,7 +29,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 @Mod.EventBusSubscriber(modid = Kittify.MOD_ID)
 public class CommonEventHandler {
 
-    public static final int SWING_TICKS = Integer.MAX_VALUE / 2;
     public static long debug_timing = 0;
 
 //    @SubscribeEvent
@@ -42,6 +41,8 @@ public class CommonEventHandler {
 //            debug_timing = 0;
 //        }
 //    }
+
+    private static final int SWING_TICKS = Integer.MAX_VALUE / 2;
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent e) {
@@ -131,10 +132,7 @@ public class CommonEventHandler {
         }
     }
 
-    public static final String TAG_DEATH = "Death";
-    //public static final String TAG_DEATH_EXPERIENCE_PERCENT = "XpP"
-    //public static final String TAG_DEATH_LEVEL = "XpLevel";
-    public static final String TAG_DEATH_EXPERIENCE_TOTAL = "XpTotal";
+    private static final String TAG_DEATH_EXPERIENCE = "DeathXP";
 
     /**
      * Save experience on death (so it can be returned on respawn).
@@ -149,13 +147,10 @@ public class CommonEventHandler {
         if (entity instanceof EntityPlayer) {
             final EntityPlayer player = (EntityPlayer) entity;
             if (e.getDroppedExperience() < player.experienceTotal) {
-                final NBTTagCompound root = NBTUtil.getSetTag(NBTUtil.getModPersistedTag(player), TAG_DEATH);
                 // Save the experience
-                //root.setFloat(TAG_DEATH_EXPERIENCE_PERCENT, player.experience);
-                //root.setInteger(TAG_DEATH_LEVEL, player.experienceLevel);
-                root.setInteger(TAG_DEATH_EXPERIENCE_TOTAL, player.experienceTotal);
+                NBTUtil.getModPersistedTag(player).setInteger(TAG_DEATH_EXPERIENCE, player.experienceTotal);
 
-                // Prevent duplication of experience
+                // Try to prevent duplication of experience
                 player.experience = 0f;
                 player.experienceLevel = 0;
                 player.experienceTotal = 0;
@@ -169,16 +164,10 @@ public class CommonEventHandler {
     public static void experienceLoadOnRespawn(PlayerEvent.Clone e) {
         final EntityPlayer clone = e.getEntityPlayer();
         final NBTTagCompound modPersistedTag = NBTUtil.getModPersistedTag(clone);
-        if (modPersistedTag.hasKey(TAG_DEATH)) {
-            final NBTTagCompound root = modPersistedTag.getCompoundTag(TAG_DEATH);
-            final int experienceTotal = root.getInteger(TAG_DEATH_EXPERIENCE_TOTAL);
-            if (clone.experienceTotal < experienceTotal) {
-                //clone.experience = root.getFloat(TAG_DEATH_EXPERIENCE_PERCENT);
-                //clone.experienceLevel = root.getInteger(TAG_DEATH_LEVEL);
-                //clone.experienceTotal = experienceTotal;
-                clone.addExperience(experienceTotal);
-            }
-            modPersistedTag.removeTag(TAG_DEATH);
+        if (modPersistedTag.hasKey(TAG_DEATH_EXPERIENCE)) {
+            final int experienceTotal = modPersistedTag.getInteger(TAG_DEATH_EXPERIENCE);
+            clone.addExperience(experienceTotal);
+            modPersistedTag.removeTag(TAG_DEATH_EXPERIENCE);
         }
     }
 }
