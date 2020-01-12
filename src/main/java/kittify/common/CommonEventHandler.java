@@ -2,16 +2,17 @@ package kittify.common;
 
 import kittify.Kittify;
 import kittify.common.module.EntityProtection;
+import kittify.common.util.NBTUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
@@ -130,36 +131,54 @@ public class CommonEventHandler {
         }
     }
 
+    public static final String TAG_DEATH = "Death";
+    //public static final String TAG_DEATH_EXPERIENCE_PERCENT = "XpP"
+    //public static final String TAG_DEATH_LEVEL = "XpLevel";
+    public static final String TAG_DEATH_EXPERIENCE_TOTAL = "XpTotal";
+
     /**
-     * Drop all experience on death.
-     * Handles with lowest priority so that other mods can do stuff with this event if they want to first.
-     * This might cause a whole lot of lag though... Haha... Might wanna install clumps mod tbh.
+     * Save experience on death (so it can be returned on respawn).
+     * Lowest to allow other mods to save experience if they want to (this is a last resort).
      * This doesn't get run if keepInventory is on.
+     *
      * @param e Event data
      */
     @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void dropAllExperienceOnDeath(LivingExperienceDropEvent e) {
+    public static void experienceSaveOnDeath(LivingExperienceDropEvent e) {
         final EntityLivingBase entity = e.getEntityLiving();
-        if(entity instanceof EntityPlayer) {
+        if (entity instanceof EntityPlayer) {
             final EntityPlayer player = (EntityPlayer) entity;
-            final int experienceTotal = player.experienceTotal;
-            if(e.getDroppedExperience() < experienceTotal) {
-                // Handle spawning experience specially to cause less lag
+            if (e.getDroppedExperience() < player.experienceTotal) {
+                final NBTTagCompound root = NBTUtil.getSetTag(NBTUtil.getModPersistedTag(player), TAG_DEATH);
+                // Save the experience
+                //root.setFloat(TAG_DEATH_EXPERIENCE_PERCENT, player.experience);
+                //root.setInteger(TAG_DEATH_LEVEL, player.experienceLevel);
+                root.setInteger(TAG_DEATH_EXPERIENCE_TOTAL, player.experienceTotal);
+
+                // Prevent duplication of experience
+                player.experience = 0f;
+                player.experienceLevel = 0;
+                player.experienceTotal = 0;
                 e.setDroppedExperience(0);
                 e.setCanceled(true);
-                int remaining = experienceTotal;
-                // Experience orbs have a limit of short value (halving just in case?)
-                final int maxExpValue = Short.MAX_VALUE / 2;
-                final World world = player.world;
-                final double posX = player.posX;
-                final double posY = player.posY;
-                final double posZ = player.posZ;
-                while(remaining > 0) {
-                    final int splitExp = Math.min(maxExpValue, remaining);
-                    remaining -= splitExp;
-                    world.spawnEntity(new EntityXPOrb(world, posX, posY, posZ, splitExp));
-                }
             }
+        }
+    }
+
+    @SubscribeEvent
+    public static void experienceLoadOnRespawn(PlayerEvent.Clone e) {
+        final EntityPlayer clone = e.getEntityPlayer();
+        final NBTTagCompound modPersistedTag = NBTUtil.getModPersistedTag(clone);
+        if (modPersistedTag.hasKey(TAG_DEATH)) {
+            final NBTTagCompound root = modPersistedTag.getCompoundTag(TAG_DEATH);
+            final int experienceTotal = root.getInteger(TAG_DEATH_EXPERIENCE_TOTAL);
+            if (clone.experienceTotal < experienceTotal) {
+                //clone.experience = root.getFloat(TAG_DEATH_EXPERIENCE_PERCENT);
+                //clone.experienceLevel = root.getInteger(TAG_DEATH_LEVEL);
+                //clone.experienceTotal = experienceTotal;
+                clone.addExperience(experienceTotal);
+            }
+            modPersistedTag.removeTag(TAG_DEATH);
         }
     }
 }
