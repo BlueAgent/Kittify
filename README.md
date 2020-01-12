@@ -7,6 +7,7 @@ There are no configs right now but might add them or just make the project open 
 ## Player
 - Removed Attack Cooldown
 - Angel of Vengeance: Restores all ability charges over 10 minutes
+- Drops full value of experience on death
 
 ## Mob Changes
 - Creeper: Explosions don't affect tile entities or destroy dropped items and always drop the blocks broken

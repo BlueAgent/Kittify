@@ -1,6 +1,7 @@
 ## [0.0.4] - TBA
 - Angel of Vengeance restores all ability charges over 10 minutes
 - Make creeper explosions not affect tile entities, not destroy dropped items and always drop the blocks broken
+- Make experience drop the full value on death
 
 ## [0.0.3] - 2020-01-01
 - Initial release of Kittify for Minecraft 1.12.2
