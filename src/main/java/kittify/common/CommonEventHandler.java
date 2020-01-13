@@ -146,11 +146,21 @@ public class CommonEventHandler {
         final EntityLivingBase entity = e.getEntityLiving();
         if (entity instanceof EntityPlayer) {
             final EntityPlayer player = (EntityPlayer) entity;
-            if (e.getDroppedExperience() < player.experienceTotal) {
-                // Save the experience
-                NBTUtil.getModPersistedTag(player).setInteger(TAG_DEATH_EXPERIENCE, player.experienceTotal);
+            final int currentExperience = Math.max(e.getDroppedExperience(), player.experienceTotal);
+            final NBTTagCompound modPersistedTag = NBTUtil.getModPersistedTag(player);
 
-                // Try to prevent duplication of experience
+            // For when the mod was removed then added back in (handle overflow too)
+            final int previousExperience = Math.min(
+                    Integer.MAX_VALUE - currentExperience,
+                    modPersistedTag.getInteger(TAG_DEATH_EXPERIENCE)
+            );
+            final int experienceToSave = currentExperience + previousExperience;
+
+            if (experienceToSave > 0) {
+                // Save the experience
+                modPersistedTag.setInteger(TAG_DEATH_EXPERIENCE, experienceToSave);
+
+                // Try to prevent duplication of experience from other sources
                 player.experience = 0f;
                 player.experienceLevel = 0;
                 player.experienceTotal = 0;
