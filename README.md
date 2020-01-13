@@ -7,6 +7,7 @@ There are no configs right now but might add them or just make the project open 
 ## Player
 - Removed Attack Cooldown
 - Save and restore experience on respawn
+- Core Mod: Can always eat food
 - Angel of Vengeance: Restores all ability charges over 10 minutes
 
 ## Mob Changes

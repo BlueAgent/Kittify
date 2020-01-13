@@ -99,6 +99,8 @@ processResources {
 jar {
     manifest {
         attributes 'FMLAT': "${mod_id}_at.cfg"
+        attributes 'FMLCorePlugin': 'kittify.core.KittifyCore'
+        attributes 'FMLCorePluginContainsFMLMod': 'true'
     }
 }
 
