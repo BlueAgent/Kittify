@@ -23,8 +23,12 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 
 repositories {
     maven {
-        // location of the maven that hosts JEI files
+        // JEI
         url = "http://dvs1.progwml6.com/files/maven"
+    }
+    maven {
+        // AppleCore, AppleSkin
+        url "http://www.ryanliptak.com/maven/"
     }
     flatDir {
         dirs 'libs'
@@ -45,7 +49,7 @@ minecraft {
     replaceIn "src/main/java/kittify/Kittify.java"
     replace "MOD_VERSION = \"99999.999.999\"", "MOD_VERSION = \"${mod_version}\""
     replace "MC_VERSION = \"\"", "MC_VERSION = \"[${mc_version}]\""
-    replace "DEPENDENCIES = \"\"", "DEPENDENCIES = \"required-after:forge@[${forge_version},)\""
+    replace "DEPENDENCIES = \"\"", "DEPENDENCIES = \"required-after:forge@[${forge_version},);after:applecore@[${applecore_version},);\""
 }
 
 dependencies {
@@ -75,6 +79,12 @@ dependencies {
     // Angel of Vengeance
     deobfCompile name: "TamModized-${mc_version}-${tammodized_version}"
     deobfCompile name: "AoV-${mc_version_short}-${aov_version}"
+
+    // AppleCore
+    deobfCompile "applecore:AppleCore:${mc_version}-${applecore_version}:deobf"
+
+    // AppleSkin
+    deobfCompile name: "AppleSkin-mc${mc_version_short}-${appleskin_version}"
 }
 
 processResources {

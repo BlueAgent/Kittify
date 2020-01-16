@@ -33,6 +33,7 @@ public class Kittify {
     public static final String MINECRAFT_COMES_ALIVE_MODID = "mca";
     public static final String NEVERMINE_MODID = "aoa3";
     public static final String ANGEL_OF_VENGEANCE_MODID = "aov";
+    public static final String APPLECORE_MODID = "applecore";
 
     public static Logger log = LogManager.getLogger(MOD_ID);
     @SidedProxy(clientSide = "kittify.client.ClientProxy", serverSide = "kittify.common.CommonProxy")

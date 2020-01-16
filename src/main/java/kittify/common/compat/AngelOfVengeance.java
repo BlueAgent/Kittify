@@ -1,6 +1,5 @@
 package kittify.common.compat;
 
-import kittify.Kittify;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -13,10 +12,6 @@ public class AngelOfVengeance extends CompatBase {
     public static final int TICKS_TILL_FULL_CHARGES = MINUTES_TILL_FULL_CHARGES * 60 * 20;
     @CapabilityInject(IAoVCapability.class)
     public static Capability<IAoVCapability> AOV_CAP = null;
-
-    public AngelOfVengeance() {
-        super(Kittify.ANGEL_OF_VENGEANCE_MODID, "Angel of Vengeance");
-    }
 
     @Override
     public void init() {

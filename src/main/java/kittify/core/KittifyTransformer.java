@@ -26,6 +26,7 @@ import static org.objectweb.asm.Opcodes.*;
 public class KittifyTransformer implements IClassTransformer {
     public static final String KITTIFY_HOOKS = "kittify.core.KittifyHooks";
     public static final String ENTITY_PLAYER = "net.minecraft.entity.player.EntityPlayer";
+    public static final String FOOD_STATS = "net.minecraft.util.FoodStats";
 
     public final ImmutableMultimap<String, Consumer<ClassNode>> transformers = collectTransformers();
 
@@ -52,6 +53,109 @@ public class KittifyTransformer implements IClassTransformer {
         return build.build();
     }
 
+    /**
+     * Hook to prevent regen for some time after being hit
+     */
+    @Transformer(transformedName = FOOD_STATS)
+    public static void hookFoodStats(ClassNode cn) {
+        final MethodNode mn = getMethodNode(cn,
+                OBFUSCATED ? "func_75118_a" : "onUpdate",
+                createMethodDescriptor("V", ENTITY_PLAYER)
+        );
+
+        final AbstractInsnNode[] originalInstructions = mn.instructions.toArray();
+        int i = 0;
+
+        // Right after: boolean flag = player.world.getGameRules().getBoolean("naturalRegeneration");
+        VarInsnNode insnISTORE_flag = null;
+        for (; i < originalInstructions.length; i++) {
+            AbstractInsnNode insn = originalInstructions[i];
+            if (CoreUtil.isLabelOrLine(insn)) continue;
+            if (insn.getOpcode() != ISTORE || !(insn instanceof VarInsnNode)) continue;
+            if (!(insn.getPrevious() instanceof MethodInsnNode)) continue;
+            AbstractInsnNode insn_m2 = insn.getPrevious().getPrevious();
+            if (!(insn_m2 instanceof LdcInsnNode) || !((LdcInsnNode) insn_m2).cst.equals("naturalRegeneration"))
+                continue;
+            insnISTORE_flag = (VarInsnNode) insn;
+            break;
+        }
+        if (insnISTORE_flag == null)
+            throw new RuntimeException("ISTORE `flag` after LDC \"naturalRegeneration\"; INVOKEVIRTUAL ...; not found");
+
+        // At: if (flag && ...)
+        VarInsnNode insnILOAD_flag = null;
+        for (; i < originalInstructions.length; i++) {
+            AbstractInsnNode insn = originalInstructions[i];
+            if (CoreUtil.isLabelOrLine(insn)) continue;
+            if (insn.getOpcode() != ILOAD || !(insn instanceof VarInsnNode) || ((VarInsnNode) insn).var != insnISTORE_flag.var)
+                continue;
+            if (!(insn.getNext() instanceof JumpInsnNode)) continue;
+            insnILOAD_flag = (VarInsnNode) insn;
+            break;
+        }
+        if (insnILOAD_flag == null)
+            throw new RuntimeException("ILOAD `flag` followed by IFEQ not found");
+
+        // return at the end of the function, either a label just before the end, or it create and inserts a new one
+        InsnNode insnRETURN = null;
+        for (; i < originalInstructions.length; i++) {
+            AbstractInsnNode insn = originalInstructions[i];
+            if (CoreUtil.isLabelOrLine(insn)) continue;
+            if (insn.getOpcode() != RETURN || !(insn instanceof InsnNode)) continue;
+            insnRETURN = (InsnNode) insn;
+            break;
+        }
+        if (insnRETURN == null)
+            throw new RuntimeException("RETURN not found");
+
+        // Represents
+        //     boolean flag = player.world.getGameRules().getBoolean("naturalRegeneration");
+        //     +flag = KittifyHooks.shouldNaturalRegen(flag, player, this);
+        //      ...
+        //     +if(KittifyHooks.doSpecialRegen(flag, player, this)) {
+        //     +}else
+        //      if (flag && this.foodSaturationLevel > 0.0F && player.shouldHeal() && this.foodLevel >= 20)
+
+        final InsnList hook_shouldNaturalRegen = new InsnList();
+        hook_shouldNaturalRegen.add(new LabelNode());
+        hook_shouldNaturalRegen.add(new VarInsnNode(ILOAD, insnISTORE_flag.var)); // -> flag
+        hook_shouldNaturalRegen.add(new VarInsnNode(ALOAD, 1)); // -> player
+        hook_shouldNaturalRegen.add(new VarInsnNode(ALOAD, 0)); // -> this
+        // flag, player, this -> flag
+        hook_shouldNaturalRegen.add(new MethodInsnNode(INVOKESTATIC,
+                typeToPath(KITTIFY_HOOKS), "shouldNaturalRegen",
+                createMethodDescriptor("Z", "Z", ENTITY_PLAYER, FOOD_STATS),
+                false
+        ));
+        // flag ->
+        hook_shouldNaturalRegen.add(new VarInsnNode(ISTORE, insnILOAD_flag.var));
+
+        mn.instructions.insert(insnISTORE_flag, hook_shouldNaturalRegen);
+
+        final InsnList hook_doSpecialRegen = new InsnList();
+        hook_doSpecialRegen.add(new VarInsnNode(ILOAD, insnISTORE_flag.var)); // -> flag
+        hook_doSpecialRegen.add(new VarInsnNode(ALOAD, 1)); // -> player
+        hook_doSpecialRegen.add(new VarInsnNode(ALOAD, 0)); // -> this
+        hook_doSpecialRegen.add(new MethodInsnNode(INVOKESTATIC,
+                typeToPath(KITTIFY_HOOKS), "doSpecialRegen",
+                createMethodDescriptor("Z", "Z", ENTITY_PLAYER, FOOD_STATS),
+                false
+        ));
+        final LabelNode nextIf = new LabelNode();
+        hook_doSpecialRegen.add(new JumpInsnNode(Opcodes.IFEQ, nextIf));
+        // Inside if
+
+        // End if
+        final LabelNode funcReturn = new LabelNode();
+        hook_doSpecialRegen.add(new JumpInsnNode(Opcodes.GOTO, funcReturn));
+        hook_doSpecialRegen.add(nextIf);
+
+        mn.instructions.insertBefore(insnILOAD_flag, hook_doSpecialRegen);
+
+        // Return at end of function
+        mn.instructions.insertBefore(insnRETURN, funcReturn);
+    }
+
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if (!transformers.containsKey(transformedName)) return basicClass;
@@ -62,20 +166,21 @@ public class KittifyTransformer implements IClassTransformer {
 
         transformers.get(transformedName).forEach(transformer -> transformer.accept(node));
 
-        final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+        final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
         node.accept(writer);
         final byte[] outputClass = writer.toByteArray();
         if (!OBFUSCATED) {
-            final File folder = new File("./KittifyTransformer/");
-            if (folder.exists() || folder.mkdirs()) {
-                final File file = new File(folder, transformedName + ".class");
+            final File root = new File("./KittifyTransformer/");
+            final File file = new File(root, typeToPath(transformedName) + ".class");
+            final File parentDir = file.getParentFile();
+            if (parentDir.exists() || parentDir.mkdirs()) {
                 try (final FileOutputStream fileOutputStream = new FileOutputStream(file)) {
                     fileOutputStream.write(outputClass);
                 } catch (IOException e) {
                     throw new RuntimeException("Failed to save: " + file, e);
                 }
             } else {
-                throw new RuntimeException("Could not create all folder(s): " + folder);
+                throw new RuntimeException("Could not create all folder(s): " + parentDir);
             }
         }
         return outputClass;
@@ -85,7 +190,7 @@ public class KittifyTransformer implements IClassTransformer {
      * Hook to determine if a player can eat or not.
      *
      * @see EntityPlayer#canEat(boolean)
-     * @see KittifyHooks#canEat(EntityPlayer, boolean);
+     * @see KittifyHooks#canEat(EntityPlayer, boolean)
      */
     @Transformer(transformedName = ENTITY_PLAYER)
     public void hookPlayerCanEat(ClassNode cn) {

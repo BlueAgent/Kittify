@@ -9,6 +9,7 @@ import java.util.Map;
 
 @IFMLLoadingPlugin.Name("KittifyCore")
 @IFMLLoadingPlugin.MCVersion("1.12.2")
+@IFMLLoadingPlugin.SortingIndex(9999)
 @IFMLLoadingPlugin.TransformerExclusions({"kittify.core"})
 public class KittifyCore implements IFMLLoadingPlugin {
 
