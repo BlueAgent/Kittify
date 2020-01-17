@@ -8,6 +8,8 @@ There are no configs right now but might add them or just make the project open 
 - Removed Attack Cooldown
 - Save and restore experience on respawn
 - Core Mod: Can always eat food
+- Core Mod: Regenerate to full health (scales up with max hp) in 5 minutes
+- Core Mod: Regeneration disabled for 1 minute on taking damage
 - Angel of Vengeance: Restores all ability charges over 10 minutes
 
 ## Mob Changes

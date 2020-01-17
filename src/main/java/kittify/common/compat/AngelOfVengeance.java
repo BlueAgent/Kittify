@@ -24,11 +24,15 @@ public class AngelOfVengeance extends CompatBase {
         long totalWorldTime = e.player.world.getTotalWorldTime();
         // Recharge abilities
         for (Ability a : aov.getAbilities()) {
-            int chargeLimit = a.getAbility().getMaxCharges() + aov.getExtraCharges(e.player, a);
+            int maxChanges = a.getAbility().getMaxCharges();
+            // Ability doesn't have charges
+            if (maxChanges <= 0) continue;
+            int chargeLimit = maxChanges + aov.getExtraCharges(e.player, a);
             // Should probably do this with capabilities... It'd be more consistent but also more laggy.
             // Not worth using capabilities for this. Having  slightly more charges isn't that game breaking.
             if (a.getCharges() >= chargeLimit) continue;
             int ticksPerCharge = TICKS_TILL_FULL_CHARGES / chargeLimit;
+            // Recharge ability
             if (totalWorldTime % ticksPerCharge == 0) {
                 a.restoreCharge(e.player, aov, 1);
             }
