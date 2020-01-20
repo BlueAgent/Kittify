@@ -1,6 +1,7 @@
 package kittify;
 
 import kittify.common.CommonProxy;
+import net.minecraft.util.FoodStats;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
@@ -46,6 +47,7 @@ public class Kittify {
         Kittify.log.info(String.format("Pre-Init %s v%s", MOD_ID, MOD_VERSION));
         Kittify.log = event.getModLog();
         proxy.preInit(event);
+        new FoodStats();
     }
 
     @EventHandler

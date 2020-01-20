@@ -2,7 +2,6 @@ package kittify.core;
 
 import kittify.common.module.FoodAndHunger;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.FoodStats;
 import org.objectweb.asm.tree.ClassNode;
 
 public final class KittifyHooks {
@@ -22,11 +21,11 @@ public final class KittifyHooks {
         return true;
     }
 
-    public static boolean shouldNaturalRegen(boolean naturalRegen, EntityPlayer player, FoodStats foodStats) {
+    public static boolean shouldNaturalRegen(boolean naturalRegen, EntityPlayer player) {
         return false;
     }
 
-    public static boolean doSpecialRegen(boolean naturalRegen, EntityPlayer player, FoodStats foodStats) {
+    public static boolean doSpecialRegen(boolean naturalRegen, EntityPlayer player) {
         // TODO: Find better way of doing this?
         return FoodAndHunger.doSpecialRegen(player, 4.0f);
     }

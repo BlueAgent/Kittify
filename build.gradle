@@ -81,7 +81,8 @@ dependencies {
     deobfCompile name: "AoV-${mc_version_short}-${aov_version}"
 
     // AppleCore
-    deobfCompile "applecore:AppleCore:${mc_version}-${applecore_version}:deobf"
+    deobfCompile "applecore:AppleCore:${mc_version}-${applecore_version}:api"
+    //deobfCompile "applecore:AppleCore:${mc_version}-${applecore_version}:deobf"
 
     // AppleSkin
     deobfCompile name: "AppleSkin-mc${mc_version_short}-${appleskin_version}"

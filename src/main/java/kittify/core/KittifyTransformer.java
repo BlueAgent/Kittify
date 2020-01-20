@@ -1,16 +1,20 @@
 package kittify.core;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Streams;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.IClassTransformer;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
+import org.objectweb.asm.util.ASMifier;
+import org.objectweb.asm.util.TraceClassVisitor;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -21,6 +25,8 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 
 import static kittify.core.CoreUtil.*;
+import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
+import static org.objectweb.asm.ClassWriter.COMPUTE_MAXS;
 import static org.objectweb.asm.Opcodes.*;
 
 public class KittifyTransformer implements IClassTransformer {
@@ -66,7 +72,7 @@ public class KittifyTransformer implements IClassTransformer {
         final AbstractInsnNode[] originalInstructions = mn.instructions.toArray();
         int i = 0;
 
-        // Right after: boolean flag = player.world.getGameRules().getBoolean("naturalRegeneration");
+        // Right at setting flag: boolean flag = player.world.getGameRules().getBoolean("naturalRegeneration");
         VarInsnNode insnISTORE_flag = null;
         for (; i < originalInstructions.length; i++) {
             AbstractInsnNode insn = originalInstructions[i];
@@ -109,51 +115,42 @@ public class KittifyTransformer implements IClassTransformer {
             throw new RuntimeException("RETURN not found");
 
         // Represents
-        //     boolean flag = player.world.getGameRules().getBoolean("naturalRegeneration");
-        //     +flag = KittifyHooks.shouldNaturalRegen(flag, player, this);
-        //      ...
-        //     +if(KittifyHooks.doSpecialRegen(flag, player, this)) {
-        //     +}else
-        //      if (flag && this.foodSaturationLevel > 0.0F && player.shouldHeal() && this.foodLevel >= 20)
+        //     -boolean flag = player.world.getGameRules().getBoolean("naturalRegeneration");
+        //     +boolean flag = KittifyHooks.shouldNaturalRegen(player.world.getGameRules().getBoolean("naturalRegeneration"), player);
+        //     +if(!KittifyHooks.doSpecialRegen(flag, player, this)) {
+        //     <rest of the method / regeneration and starvation code>
+        //     +}
 
         final InsnList hook_shouldNaturalRegen = new InsnList();
-        hook_shouldNaturalRegen.add(new LabelNode());
-        hook_shouldNaturalRegen.add(new VarInsnNode(ILOAD, insnISTORE_flag.var)); // -> flag
+        // Stack start: flag
         hook_shouldNaturalRegen.add(new VarInsnNode(ALOAD, 1)); // -> player
-        hook_shouldNaturalRegen.add(new VarInsnNode(ALOAD, 0)); // -> this
+        //hook_shouldNaturalRegen.add(new VarInsnNode(ALOAD, 0)); // -> this
         // flag, player, this -> flag
         hook_shouldNaturalRegen.add(new MethodInsnNode(INVOKESTATIC,
                 typeToPath(KITTIFY_HOOKS), "shouldNaturalRegen",
-                createMethodDescriptor("Z", "Z", ENTITY_PLAYER, FOOD_STATS),
+                createMethodDescriptor("Z", "Z", ENTITY_PLAYER),
                 false
         ));
-        // flag ->
-        hook_shouldNaturalRegen.add(new VarInsnNode(ISTORE, insnILOAD_flag.var));
-
-        mn.instructions.insert(insnISTORE_flag, hook_shouldNaturalRegen);
+        mn.instructions.insertBefore(insnISTORE_flag, hook_shouldNaturalRegen); // -> flag
 
         final InsnList hook_doSpecialRegen = new InsnList();
         hook_doSpecialRegen.add(new VarInsnNode(ILOAD, insnISTORE_flag.var)); // -> flag
         hook_doSpecialRegen.add(new VarInsnNode(ALOAD, 1)); // -> player
-        hook_doSpecialRegen.add(new VarInsnNode(ALOAD, 0)); // -> this
+        //hook_doSpecialRegen.add(new VarInsnNode(ALOAD, 0)); // -> this
         hook_doSpecialRegen.add(new MethodInsnNode(INVOKESTATIC,
                 typeToPath(KITTIFY_HOOKS), "doSpecialRegen",
-                createMethodDescriptor("Z", "Z", ENTITY_PLAYER, FOOD_STATS),
+                createMethodDescriptor("Z", "Z", ENTITY_PLAYER),
                 false
         ));
-        final LabelNode nextIf = new LabelNode();
-        hook_doSpecialRegen.add(new JumpInsnNode(Opcodes.IFEQ, nextIf));
-        // Inside if
-
-        // End if
         final LabelNode funcReturn = new LabelNode();
-        hook_doSpecialRegen.add(new JumpInsnNode(Opcodes.GOTO, funcReturn));
-        hook_doSpecialRegen.add(nextIf);
+        hook_doSpecialRegen.add(new JumpInsnNode(Opcodes.IFNE, funcReturn));
+        // IFNE Return (Stack EMPTY)
 
         mn.instructions.insertBefore(insnILOAD_flag, hook_doSpecialRegen);
 
         // Return at end of function
         mn.instructions.insertBefore(insnRETURN, funcReturn);
+        //mn.instructions.insertBefore(insnRETURN, new FrameNode(F_SAME, 0, null, 0, null));
     }
 
     @Override
@@ -166,18 +163,59 @@ public class KittifyTransformer implements IClassTransformer {
 
         transformers.get(transformedName).forEach(transformer -> transformer.accept(node));
 
-        final ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+        final ClassWriter writer = new ClassWriter(COMPUTE_MAXS);
         node.accept(writer);
         final byte[] outputClass = writer.toByteArray();
+
+        // Debug Output
         if (!OBFUSCATED) {
             final File root = new File("./KittifyTransformer/");
-            final File file = new File(root, typeToPath(transformedName) + ".class");
-            final File parentDir = file.getParentFile();
+            final File classFile = new File(root, typeToPath(transformedName) + ".class");
+            final File parentDir = classFile.getParentFile();
             if (parentDir.exists() || parentDir.mkdirs()) {
-                try (final FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+                try (final FileOutputStream fileOutputStream = new FileOutputStream(classFile)) {
                     fileOutputStream.write(outputClass);
                 } catch (IOException e) {
-                    throw new RuntimeException("Failed to save: " + file, e);
+                    throw new RuntimeException("Failed to save class: " + classFile, e);
+                }
+                // Check the ASMifier output vs the output when stack frames differ
+                final ASMifier asmifierUnchanged = new ASMifier();
+                new ClassReader(outputClass)
+                        .accept(new TraceClassVisitor(null, asmifierUnchanged, null), 0);
+
+                final File asmFile = new File(root, typeToPath(transformedName) + ".asm.java");
+                try (final FileOutputStream fileOutputStream = new FileOutputStream(asmFile)) {
+                    try (final PrintWriter pr = new PrintWriter(fileOutputStream)) {
+                        asmifierUnchanged.print(pr);
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to save asm: " + asmFile, e);
+                }
+
+                final ClassWriter writerComputed = new ClassWriter(COMPUTE_MAXS | COMPUTE_FRAMES);
+                node.accept(writerComputed);
+                final ASMifier asmifierComputed = new ASMifier();
+                new ClassReader(writerComputed.toByteArray())
+                        .accept(new TraceClassVisitor(null, asmifierComputed, null), 0);
+
+                // Only output the computed if it differs, otherwise delete if it exists
+                boolean isSame = asmifierUnchanged.text.size() == asmifierComputed.text.size() && Streams
+                        .zip(asmifierUnchanged.text.stream(), asmifierComputed.text.stream(),
+                                (a, b) -> a.toString().equals(b.toString()))
+                        .reduce(true, (a, b) -> a && b);
+
+                final File asmComputedFile = new File(root, typeToPath(transformedName) + ".comp.asm.java");
+                if (!isSame) {
+                    try (final FileOutputStream fileOutputStream = new FileOutputStream(asmComputedFile)) {
+                        try (final PrintWriter pr = new PrintWriter(fileOutputStream)) {
+                            asmifierComputed.print(pr);
+                        }
+                    } catch (IOException e) {
+                        throw new RuntimeException("Failed to save computed asm: " + asmComputedFile, e);
+                    }
+                } else {
+                    //noinspection ResultOfMethodCallIgnored
+                    asmComputedFile.delete();
                 }
             } else {
                 throw new RuntimeException("Could not create all folder(s): " + parentDir);

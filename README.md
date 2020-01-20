@@ -13,7 +13,7 @@ There are no configs right now but might add them or just make the project open 
 - Angel of Vengeance: Restores all ability charges over 10 minutes
 
 ## Mob Changes
-- Creeper: Explosions don't affect tile entities or destroy dropped items and always drop the blocks broken
+- Creeper: Explosions don't damage blocks
 
 ## Pets / Tameable (e.g. Dogs, Cats, Horses)
 - Cannot be targeted by mobs
@@ -30,6 +30,9 @@ Prevents villagers from being targeted by powerful mobs
 ### Villager Attackers
 - Advent Of Acension Mobs
 - Grimoire of Gaia Mobs
+
+## Misc
+- Explosions don't affect tile entities or destroy dropped items and always drop the blocks broken
 
 ## Commands
 ### Server (/kittify <command> [params...])

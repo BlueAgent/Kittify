@@ -1,6 +1,7 @@
 ## [0.0.4] - TBA
 - Angel of Vengeance restores all ability charges over 10 minutes
-- Make creeper explosions not affect tile entities, not destroy dropped items and always drop the blocks broken
+- Make most explosions not affect tile entities, not destroy dropped items and always drop the blocks broken
+- Creeper explosions don't damage blocks
 - Save and restore player experience on respawn
 - Core Mod: Allow players to eat food, even when full
 - Core Mod: Replace regen with own system (1 minute after taking damage, regenerate to full after 5 minutes no matter the health)

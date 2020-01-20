@@ -110,26 +110,33 @@ public class CommonEventHandler {
         }
     }
 
-    @SubscribeEvent
-    public static void nicerCreeperExplosions(ExplosionEvent.Detonate e) {
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void nicerExplosionsInGeneral(ExplosionEvent.Detonate e) {
         final Explosion explosion = e.getExplosion();
-        if (explosion.getExplosivePlacedBy() instanceof EntityCreeper) {
-            final World world = e.getWorld();
-            // Reference: net.minecraft.world.Explosion.doExplosionB
-            // Explode non-TileEntities without loss
-            explosion.getAffectedBlockPositions().forEach(blockPos -> {
-                final IBlockState state = world.getBlockState(blockPos);
-                final Block block = state.getBlock();
-                if (state.getMaterial() == Material.AIR) return;
-                if (!block.canDropFromExplosion(explosion)) return;
-                if (block.hasTileEntity(state) || world.getTileEntity(blockPos) != null) return;
-                block.dropBlockAsItemWithChance(world, blockPos, state, 1.0f, 0);
-                block.onBlockExploded(world, blockPos, explosion);
-            });
+        if (!explosion.damagesTerrain) return;
+        final World world = e.getWorld();
+        // Reference: net.minecraft.world.Explosion.doExplosionB
+        // Explode non-TileEntities without loss
+        explosion.getAffectedBlockPositions().forEach(blockPos -> {
+            final IBlockState state = world.getBlockState(blockPos);
+            final Block block = state.getBlock();
+            if (state.getMaterial() == Material.AIR) return;
+            if (!block.canDropFromExplosion(explosion)) return;
+            if (block.hasTileEntity(state) || world.getTileEntity(blockPos) != null) return;
+            block.dropBlockAsItemWithChance(world, blockPos, state, 1.0f, 0);
+            block.onBlockExploded(world, blockPos, explosion);
+        });
+        explosion.clearAffectedBlockPositions();
+        // No damage to non-living entities
+        e.getAffectedEntities().removeIf(entity -> !(entity instanceof EntityLivingBase));
+    }
+
+    @SubscribeEvent
+    public static void disableCreeperExplosions(ExplosionEvent.Detonate e) {
+        final Explosion explosion = e.getExplosion();
+        if (!explosion.damagesTerrain) return;
+        if (explosion.getExplosivePlacedBy() instanceof EntityCreeper)
             explosion.clearAffectedBlockPositions();
-            // No damage to non-living entities
-            e.getAffectedEntities().removeIf(entity -> !(entity instanceof EntityLiving));
-        }
     }
 
     private static final String TAG_DEATH_EXPERIENCE = "DeathXP";
