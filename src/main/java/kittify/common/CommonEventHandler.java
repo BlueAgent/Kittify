@@ -28,21 +28,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 @Mod.EventBusSubscriber(modid = Kittify.MOD_ID)
 public class CommonEventHandler {
-
-    public static long debug_timing = 0;
-
-//    @SubscribeEvent
-//    public static void onServerTick(TickEvent.ServerTickEvent e) {
-//        if(e.phase != TickEvent.Phase.END) return;
-//        int tick = FMLCommonHandler.instance().getMinecraftServerInstance().getTickCounter();
-//        if (tick % (20*10) == 0) {
-//            double yay = debug_timing / (20. * 10.) / 1000.;
-//            System.out.println(yay + " ms/t");
-//            debug_timing = 0;
-//        }
-//    }
-
     private static final int SWING_TICKS = Integer.MAX_VALUE / 2;
+    private static final String TAG_DEATH_EXPERIENCE = "DeathXP";
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent e) {
@@ -138,8 +125,6 @@ public class CommonEventHandler {
         if (explosion.getExplosivePlacedBy() instanceof EntityCreeper)
             explosion.clearAffectedBlockPositions();
     }
-
-    private static final String TAG_DEATH_EXPERIENCE = "DeathXP";
 
     /**
      * Save experience on death (so it can be returned on respawn).

@@ -1,3 +1,6 @@
+## [NEXT] - YYYY-MM-DD
+- Placeholder
+
 ## [0.0.4] - 2020-11-23
 - Angel of Vengeance restores all ability charges over 10 minutes
 - Make most explosions not affect tile entities, not destroy dropped items and always drop the blocks broken

@@ -1,16 +1,18 @@
 [
-{
-  "modid": "kittify",
-  "name": "Kittify",
-  "description": "Stuff to make Kittens happy",
-  "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": ["BlueAgent"],
-  "credits": "Kittens and Cats",
-  "logoFile": "assets/kittify/logo.png",
-  "screenshots": [],
-  "dependencies": []
-}
+  {
+    "modid": "kittify",
+    "name": "Kittify",
+    "description": "Stuff to make Kittens happy",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [
+      "BlueAgent"
+    ],
+    "credits": "Kittens and Cats",
+    "logoFile": "assets/kittify/logo.png",
+    "screenshots": [],
+    "dependencies": []
+  }
 ]

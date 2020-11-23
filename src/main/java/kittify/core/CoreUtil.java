@@ -13,10 +13,10 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public final class CoreUtil {
-    public static boolean OBFUSCATED = !FMLLaunchHandler.isDeobfuscatedEnvironment();
-    private static final ImmutableSet<String> PRIMATIVE_DESCRIPTORS = new ImmutableSet.Builder<String>()
+    private static final ImmutableSet<String> PRIMITIVE_DESCRIPTORS = new ImmutableSet.Builder<String>()
             .add("V", "Z", "C", "B", "S", "I", "F", "J", "D")
             .build();
+    public static boolean OBFUSCATED = !FMLLaunchHandler.isDeobfuscatedEnvironment();
 
     public static MethodNode getMethodNode(ClassNode cn, String name, String desc) {
         return cn.methods.stream()
@@ -42,7 +42,7 @@ public final class CoreUtil {
     }
 
     private static String typeToDescriptor(String typeName) {
-        if (PRIMATIVE_DESCRIPTORS.contains(typeName)) return typeName;
+        if (PRIMITIVE_DESCRIPTORS.contains(typeName)) return typeName;
         return "L" + typeToPath(typeName) + ";";
     }
 

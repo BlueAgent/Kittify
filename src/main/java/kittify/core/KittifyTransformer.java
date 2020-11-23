@@ -34,9 +34,9 @@ public class KittifyTransformer implements IClassTransformer {
     public static final String ENTITY_PLAYER = "net.minecraft.entity.player.EntityPlayer";
     public static final String FOOD_STATS = "net.minecraft.util.FoodStats";
 
-    public final ImmutableMultimap<String, Consumer<ClassNode>> transformers = collectTransformers();
+    public final ImmutableMultimap<String, Consumer<ClassNode>> transformers = collectTransformers(this);
 
-    private ImmutableMultimap<String, Consumer<ClassNode>> collectTransformers() {
+    private static ImmutableMultimap<String, Consumer<ClassNode>> collectTransformers(KittifyTransformer kittifyTransformer) {
         ImmutableMultimap.Builder<String, Consumer<ClassNode>> build = ImmutableMultimap.builder();
         Arrays.stream(KittifyTransformer.class.getDeclaredMethods())
                 .filter(m -> m.isAnnotationPresent(Transformer.class))
@@ -45,7 +45,7 @@ public class KittifyTransformer implements IClassTransformer {
                     if (parameterTypes.length != 1 || !ClassNode.class.isAssignableFrom(parameterTypes[0]))
                         throw new RuntimeException("Method '" + m + "' should only have a single ClassNode parameter");
                     final String className = m.getAnnotation(Transformer.class).transformedName();
-                    final Object instance = Modifier.isStatic(m.getModifiers()) ? null : this;
+                    final Object instance = Modifier.isStatic(m.getModifiers()) ? null : kittifyTransformer;
                     final Consumer<ClassNode> transformer = (classNode) -> {
                         try {
                             KittifyCore.log.info("Transforming " + className + " using " + m);
@@ -63,7 +63,7 @@ public class KittifyTransformer implements IClassTransformer {
      * Hook to prevent regen for some time after being hit
      */
     @Transformer(transformedName = FOOD_STATS)
-    public static void hookFoodStats(ClassNode cn) {
+    public void hookFoodStats(ClassNode cn) {
         final MethodNode mn = getMethodNode(cn,
                 OBFUSCATED ? "func_75118_a" : "onUpdate",
                 createMethodDescriptor("V", ENTITY_PLAYER)
