@@ -1,4 +1,4 @@
-## [NEXT] - YYYY-MM-DD
+## [0.0.5] - 2020-12-14
 - Fix TNT not being set off from explosions
 - TNT set off by explosions have zero fuse
 
