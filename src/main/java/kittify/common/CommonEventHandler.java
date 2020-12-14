@@ -9,11 +9,13 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -109,8 +111,16 @@ public class CommonEventHandler {
             final Block block = state.getBlock();
             if (state.getMaterial() == Material.AIR) return;
             if (block.hasTileEntity(state) || world.getTileEntity(blockPos) != null) return;
-            block.dropBlockAsItemWithChance(world, blockPos, state, 1.0f, 0);
+            boolean canDropFromExplosion = block.canDropFromExplosion(explosion);
+            if (canDropFromExplosion) {
+                block.dropBlockAsItemWithChance(world, blockPos, state, 1.0f, 0);
+            }
             block.onBlockExploded(world, blockPos, explosion);
+            // Make any TNT spawned go off almost instantly
+            if (!canDropFromExplosion) {
+                world.getEntitiesWithinAABB(EntityTNTPrimed.class, new AxisAlignedBB(blockPos))
+                        .forEach(tnt -> tnt.setFuse(0));
+            }
         });
         explosion.clearAffectedBlockPositions();
         // No damage to non-living entities

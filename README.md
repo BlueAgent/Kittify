@@ -33,6 +33,7 @@ Prevents villagers from being targeted by powerful mobs
 
 ## Misc
 - Explosions don't affect tile entities or destroy dropped items and always drop the blocks broken
+- TNT set off by explosions have zero fuse time
 
 ## Commands
 ### Server (/kittify <command> [params...])
