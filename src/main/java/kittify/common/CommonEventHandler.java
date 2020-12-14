@@ -108,7 +108,6 @@ public class CommonEventHandler {
             final IBlockState state = world.getBlockState(blockPos);
             final Block block = state.getBlock();
             if (state.getMaterial() == Material.AIR) return;
-            if (!block.canDropFromExplosion(explosion)) return;
             if (block.hasTileEntity(state) || world.getTileEntity(blockPos) != null) return;
             block.dropBlockAsItemWithChance(world, blockPos, state, 1.0f, 0);
             block.onBlockExploded(world, blockPos, explosion);

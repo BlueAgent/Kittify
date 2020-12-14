@@ -1,5 +1,5 @@
 ## [NEXT] - YYYY-MM-DD
-- Placeholder
+- Fix TNT not being set off from explosions
 
 ## [0.0.4] - 2020-11-23
 - Angel of Vengeance restores all ability charges over 10 minutes
