@@ -21,3 +21,10 @@ build
 eclipse
 run
 libs
+logs
+
+# Files from Forge MDK
+forge*changelog.txt
+
+# Generated resources cache
+.cache
