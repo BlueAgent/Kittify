@@ -1,12 +1,14 @@
 @file:Suppress("PropertyName")
 
-import net.minecraftforge.gradle.user.UserBaseExtension
+import net.kyori.blossom.BlossomExtension
+import net.minecraftforge.gradle.userdev.UserDevExtension
 
 val mod_id: String by project
 val mod_version: String by project
 val mc_version: String by project
 val mc_version_short: String by project
 val forge_version: String by project
+val mappings_channel: String by project
 val mappings_version: String by project
 val jei_version: String by project
 val grimoireofgaia_projectid: String by project
@@ -32,7 +34,8 @@ val appleskin_version: String by project
 
 plugins {
     id("com.github.ben-manes.versions")
-    id("net.minecraftforge.gradle.forge")
+    id("net.kyori.blossom")
+    id("net.minecraftforge.gradle")
 }
 
 repositories {
@@ -52,6 +55,9 @@ repositories {
     }
     flatDir {
         dirs("libs")
+        content {
+            includeGroup("libs")
+        }
     }
 }
 
@@ -66,51 +72,78 @@ configure<JavaPluginExtension> {
     targetCompatibility = null
 }
 
-configure<UserBaseExtension> {
-    version = "${mc_version}-${forge_version}"
-    runDir = "run"
-
-    mappings = mappings_version
-    makeObfSourceJar = false
-
-    replaceIn("src/main/java/kittify/Kittify.java")
-    replace("MOD_VERSION = \"99999.999.999\"", "MOD_VERSION = \"${mod_version}\"")
-    replace("MC_VERSION = \"\"", "MC_VERSION = \"[${mc_version}]\"")
-    replace("DEPENDENCIES = \"\"", "DEPENDENCIES = \"required-after:forge@[${forge_version},);after:applecore@[${applecore_version},);\"")
+configure<UserDevExtension> {
+    mappings(mappings_channel, mappings_version)
+    accessTransformer(file("src/main/resources/META-INF/${mod_id}_at.cfg"))
+    runs {
+        all {
+            lazyToken("minecraft_classpath") {
+                val configurationCopy = configurations.implementation.get().copyRecursive()
+                configurationCopy.isCanBeResolved = true
+                configurationCopy.isTransitive = false
+                configurationCopy.resolve().joinToString(File.pathSeparator) { it.absolutePath }
+            }
+        }
+        create("client") {
+            args("--username", "KittifyDev")
+            workingDirectory(file("run"))
+            property("forge.logging.markers", "SCAN,REGISTRIES,REGISTRYDUMP")
+            property("forge.logging.console.level", "debug")
+            mods {
+                create(mod_id) {
+                    sources = listOf(sourceSets["main"])
+                }
+            }
+        }
+        create("server") {
+            workingDirectory(file("run"))
+            property("forge.logging.markers", "SCAN,REGISTRIES,REGISTRYDUMP")
+            property("forge.logging.console.level", "debug")
+            mods {
+                create(mod_id) {
+                    sources = listOf(sourceSets["main"])
+                }
+            }
+        }
+    }
 }
 
 dependencies {
+    add("minecraft", "net.minecraftforge:forge:${mc_version}-${forge_version}")
     // compile against the JEI API
-    add("deobfCompile", "mezz.jei:jei_${mc_version}:${jei_version}:api")
+    compileOnly(fg.deobf("mezz.jei:jei_${mc_version}:${jei_version}:api"))
     // at runtime, use the full JEI jar
     runtimeOnly("mezz.jei:jei_${mc_version}:${jei_version}")
-    //add("deobfCompile", myResolver.resolve("${grimoireofgaia_projectid}", "${grimoireofgaia_fileid}"))
-    //add("deobfCompile", myResolver.resolve("${mca_projectid}", "${mca_fileid}"))
-    //add("deobfCompile", myResolver.resolve("${millenair_projectid}", "${millenair_fileid}"))
-    //add("deobfCompile", myResolver.resolve("${nevermine_projectid}", "${nevermine_fileid}"))
 
     // Grimoire of Gaia
-    add("deobfCompile", ":GrimoireOfGaia3-${mc_version}-${grimoireofgaia_version}:")
+    implementation(fg.deobf("libs:GrimoireOfGaia3:${mc_version}-${grimoireofgaia_version}"))
 
     // Millenaire
-    add("deobfCompile", ":millenaire-${mc_version}-${millenair_version}:")
+    implementation(fg.deobf("libs:millenaire:${mc_version}-${millenair_version}"))
 
     // Minecraft Comes Alive
-    add("deobfCompile", ":MCA-${mc_version}-${mca_version}-universal:")
+    implementation(fg.deobf("libs:MCA:${mc_version}-${mca_version}-universal"))
 
     // Nevermine (Advent of Ascension)
-    add("deobfCompile", ":AoA3-${nevermine_version}:")
+    implementation(fg.deobf("libs:AoA3:${nevermine_version}"))
 
     // Angel of Vengeance
-    add("deobfCompile", ":TamModized-${mc_version}-${tammodized_version}:")
-    add("deobfCompile", ":AoV-${mc_version_short}-${aov_version}:")
+    implementation(fg.deobf("libs:TamModized:${mc_version}-${tammodized_version}"))
+    implementation(fg.deobf("libs:AoV:${mc_version_short}-${aov_version}"))
 
     // AppleCore
-    add("deobfCompile", "applecore:AppleCore:${mc_version}-${applecore_version}:api")
-    //add("deobfCompile", "applecore:AppleCore:${mc_version}-${applecore_version}:deobf")
+    implementation(fg.deobf("applecore:AppleCore:${mc_version}-${applecore_version}:api"))
+    //implementation(fg.deobf("applecore:AppleCore:${mc_version}-${applecore_version}:deobf"))
 
     // AppleSkin
-    add("deobfCompile", ":AppleSkin-mc${mc_version_short}-${appleskin_version}:")
+    implementation(fg.deobf("libs:AppleSkin:mc${mc_version_short}-${appleskin_version}"))
+}
+
+configure<BlossomExtension> {
+    replaceToken("MOD_VERSION = \"99999.999.999\"", "MOD_VERSION = \"${mod_version}\"")
+    replaceToken("MC_VERSION = \"\"", "MC_VERSION = \"[${mc_version}]\"")
+    replaceToken("DEPENDENCIES = \"\"", "DEPENDENCIES = \"required-after:forge@[${forge_version},);after:applecore@[${applecore_version},);\"")
+    replaceTokenIn("src/main/java/kittify/Kittify.java")
 }
 
 tasks.named<ProcessResources>("processResources") {
@@ -137,8 +170,4 @@ tasks.named<Jar>("jar") {
             "FMLCorePluginContainsFMLMod" to "true",
         )
     }
-}
-
-tasks.named<JavaExec>("runClient") {
-    args("--username", "KittifyDev")
 }

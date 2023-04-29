@@ -6,8 +6,12 @@ pluginManagement {
                     useModule("com.github.ben-manes:gradle-versions-plugin:0.46.0")
                 }
 
-                "net.minecraftforge.gradle.forge" -> {
-                    useModule("com.anatawa12.forge:ForgeGradle:2.3-1.0.8")
+                "net.kyori.blossom" -> {
+                    useModule("net.kyori:blossom:1.3.1")
+                }
+
+                "net.minecraftforge.gradle" -> {
+                    useModule("net.minecraftforge.gradle:ForgeGradle:5.1.73")
                 }
             }
         }
@@ -19,12 +23,13 @@ pluginManagement {
             content {
                 includeGroup("de.oceanlabs.mcp")
                 includeGroup("net.minecraft")
-                includeGroupByRegex("^net\\.minecraftforge(?:\\.|$)")
+                includeGroupByRegex("^net\\.minecraftforge(?:\\..+$|$)")
             }
         }
         gradlePluginPortal {
             content {
                 includeGroup("com.github.ben-manes")
+                includeGroup("net.kyori")
             }
         }
         mavenCentral()
