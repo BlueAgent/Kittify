@@ -34,7 +34,7 @@ configurations {
 }
 
 dependencies {
-    "forge"("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
+    forge("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
     "common"(project(path = vanillaPath, configuration = "namedElements")) { isTransitive = false }
     "shadowCommon"(project(path = vanillaPath, configuration = "transformProductionForge")) { isTransitive = false }
 }
