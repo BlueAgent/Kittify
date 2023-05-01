@@ -79,21 +79,20 @@ subprojects {
 
     configure<LoomGradleExtensionAPI> {
         afterEvaluate {
-            getTasksByName("genSources", true).forEach { genSources ->
-                // println(genSources.toString() + " (Before): " + genSources.dependsOn.joinToString(", "))
-                val dependenciesWithoutGenSources = genSources.dependsOn
-                    .filter { dependencyTask ->
-                        val taskName = when (dependencyTask) {
-                            is TaskProvider<*> -> dependencyTask.name
-                            is Task -> dependencyTask.name
-                            else -> return@filter true
-                        }
-                        return@filter !taskName.startsWith("genSourcesWith")
+            val genSources = tasks.named<Task>("genSources").get()
+            val genSourcesWithQuiltflower = tasks.named<GenerateSourcesTask>("genSourcesWithQuiltflower")
+            // println(genSources.toString() + " (Before): " + genSources.dependsOn.joinToString(", "))
+            val dependenciesWithoutGenSources = genSources.dependsOn
+                .filter { dependencyTask ->
+                    val taskName = when (dependencyTask) {
+                        is TaskProvider<*> -> dependencyTask.name
+                        is Task -> dependencyTask.name
+                        else -> return@filter true
                     }
-                val genSourcesWithQuiltflower = tasks.named<GenerateSourcesTask>("genSourcesWithQuiltflower")
-                genSources.setDependsOn(dependenciesWithoutGenSources + sequenceOf(genSourcesWithQuiltflower))
-                // println(genSources.toString() + " (After): " + genSources.dependsOn.joinToString(", "))
-            }
+                    return@filter !taskName.startsWith("genSourcesWith")
+                }
+            genSources.setDependsOn(dependenciesWithoutGenSources + sequenceOf(genSourcesWithQuiltflower))
+            // println(genSources.toString() + " (After): " + genSources.dependsOn.joinToString(", "))
         }
     }
 }
