@@ -55,6 +55,23 @@ subprojects {
 
     configure<LoomGradleExtensionAPI> {
         silentMojangMappingsLicense()
+        afterEvaluate {
+            getTasksByName("genSources", true).forEach { genSources ->
+                // println(genSources.toString() + " (Before): " + genSources.dependsOn.joinToString(", "))
+                val dependenciesWithoutGenSources = genSources.dependsOn
+                    .filter { dependencyTask ->
+                        val taskName = when (dependencyTask) {
+                            is TaskProvider<*> -> dependencyTask.name
+                            is Task -> dependencyTask.name
+                            else -> return@filter true
+                        }
+                        return@filter !taskName.startsWith("genSourcesWith")
+                    }
+                val genSourcesWithQuiltflower = tasks.named<GenerateSourcesTask>("genSourcesWithQuiltflower")
+                genSources.setDependsOn(dependenciesWithoutGenSources + sequenceOf(genSourcesWithQuiltflower))
+                // println(genSources.toString() + " (After): " + genSources.dependsOn.joinToString(", "))
+            }
+        }
     }
 
     val loom = the<LoomGradleExtensionAPI>()
@@ -75,10 +92,5 @@ subprojects {
     configure<JavaPluginExtension> {
         toolchain.languageVersion.set(JavaLanguageVersion.of(17))
         withSourcesJar()
-    }
-
-    tasks.findByName("genSources")?.configure<Task> {
-        dependsOn.remove(tasks.named<GenerateSourcesTask>("genSourcesWithCfr"))
-        dependsOn.add(tasks.named<GenerateSourcesTask>("genSourcesWithQuiltflower"))
     }
 }
