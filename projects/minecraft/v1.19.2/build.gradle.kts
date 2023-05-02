@@ -80,20 +80,22 @@ subprojects {
 
     configure<LoomGradleExtensionAPI> {
         afterEvaluate {
-            val genSources = tasks.named<Task>("genSources").get()
+            val genSources = tasks.named<Task>("genSources")
             val genSourcesWithQuiltflower = tasks.named<GenerateSourcesTask>("genSourcesWithQuiltflower")
-            // println(genSources.toString() + " (Before): " + genSources.dependsOn.joinToString(", "))
-            val dependenciesWithoutGenSources = genSources.dependsOn
-                .filter { dependencyTask ->
-                    val taskName = when (dependencyTask) {
-                        is TaskProvider<*> -> dependencyTask.name
-                        is Task -> dependencyTask.name
-                        else -> return@filter true
+            genSources.configure {
+                // println(genSources.toString() + " (Before): " + dependsOn.joinToString(", "))
+                val dependenciesWithoutGenSources = dependsOn
+                    .filter { dependencyTask ->
+                        val taskName = when (dependencyTask) {
+                            is TaskProvider<*> -> dependencyTask.name
+                            is Task -> dependencyTask.name
+                            else -> return@filter true
+                        }
+                        return@filter !taskName.startsWith("genSourcesWith")
                     }
-                    return@filter !taskName.startsWith("genSourcesWith")
-                }
-            genSources.setDependsOn(dependenciesWithoutGenSources + sequenceOf(genSourcesWithQuiltflower))
-            // println(genSources.toString() + " (After): " + genSources.dependsOn.joinToString(", "))
+                setDependsOn(dependenciesWithoutGenSources + sequenceOf(genSourcesWithQuiltflower))
+                // println(genSources.toString() + " (After): " + dependsOn.joinToString(", "))
+            }
 
             val parentPath = Path.path(project.path).parent!!
             val projectDependencies = when (project.name) {
@@ -102,7 +104,9 @@ subprojects {
                 else -> setOf()
             }.map { project(parentPath.child(it).path!!) }
 
-            genSourcesWithQuiltflower.get().mustRunAfter(projectDependencies.map { it.tasks.named<GenerateSourcesTask>("genSourcesWithQuiltflower") })
+            genSourcesWithQuiltflower.configure {
+                mustRunAfter(projectDependencies.map { it.tasks.named<GenerateSourcesTask>("genSourcesWithQuiltflower") })
+            }
         }
     }
 }
