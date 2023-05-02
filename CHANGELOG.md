@@ -2,7 +2,8 @@
 
 ## [NEXT] - YYYY-MM-DD
 
-- Create Kittify for Minecraft 1.19.2 on Quilt, Forge and Fabric.
+- Initial release of Kittify for Minecraft 1.19.2 on Quilt, Forge and Fabric.
+- Prevent tamed mobs from dying. (1.19.2)
 
 ## [0.0.5] - 2020-12-14
 
