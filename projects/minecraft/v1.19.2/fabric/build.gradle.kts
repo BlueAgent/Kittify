@@ -53,7 +53,7 @@ tasks.named<ProcessResources>("processResources") {
     inputs.property("fabric_api_version", fabric_api_version)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     from(sourceSets["main"].resources.srcDirs) {
-        include("quilt.mod.json")
+        include("fabric.mod.json")
         expand(
             "mod_version" to mod_version,
             "minecraft_version" to minecraft_version,
@@ -62,7 +62,7 @@ tasks.named<ProcessResources>("processResources") {
         )
     }
     from(sourceSets["main"].resources.srcDirs) {
-        exclude("quilt.mod.json")
+        exclude("fabric.mod.json")
     }
 }
 
