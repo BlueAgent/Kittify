@@ -1,0 +1,30 @@
+modLoader = "javafml"
+loaderVersion = "[${forge_loader_version},)"
+license = "All rights reserved"
+issueTrackerURL = "https://github.com/BlueAgent/Kittify/issues"
+
+[[mods]]
+modId = "kittify"
+version = "${mod_version}"
+displayName = "Kittify"
+displayURL = "https://github.com/BlueAgent/Kittify"
+logoFile = "assets/kittify/logo.png"
+credits = "https://github.com/BlueAgent/Kittify/graphs/contributors"
+authors = "BlueAgent"
+description = '''
+Stuff to make Kittens happy.
+'''
+
+[[dependencies.kittify]]
+modId = "forge"
+mandatory = true
+versionRange = "[${forge_version},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.kittify]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[${minecraft_version},)"
+ordering = "NONE"
+side = "BOTH"

@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "kittify",
+    "id": "kittify",
+    "version": "${mod_version}",
+    "metadata": {
+      "name": "Kittify",
+      "description": "Stuff to make Kittens happy.",
+      "contributors": {
+        "BlueAgent": "Owner"
+      },
+      "contact": {
+        "homepage": "https://github.com/BlueAgent/Kittify",
+        "issues": "https://github.com/BlueAgent/Kittify/issues",
+        "sources": "https://github.com/BlueAgent/Kittify"
+      },
+      "icon": "assets/kittify/logo.png"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "entrypoints": {
+      "init": "kittify.quilt.KittifyQuilt"
+    },
+    "depends": [
+      {
+        "id": "quilt_loader",
+        "versions": ">=${quilt_loader_version}"
+      },
+      {
+        "id": "quilted_fabric_api",
+        "versions": ">=${quilted_fabric_api_version}"
+      },
+      {
+        "id": "minecraft",
+        "versions": ">=${minecraft_version}"
+      }
+    ]
+  },
+  "mixin": [
+    "kittify-vanilla.mixins.json"
+  ]
+}

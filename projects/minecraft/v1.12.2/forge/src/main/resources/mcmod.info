@@ -2,7 +2,7 @@
   {
     "modid": "kittify",
     "name": "Kittify",
-    "description": "Stuff to make Kittens happy",
+    "description": "Stuff to make Kittens happy.",
     "version": "${mod_version}",
     "mcversion": "${mc_version}",
     "url": "",

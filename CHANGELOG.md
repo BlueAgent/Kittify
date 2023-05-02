@@ -2,7 +2,7 @@
 
 ## [NEXT] - YYYY-MM-DD
 
-- Placeholder
+- Create Kittify for Minecraft 1.19.2 on Quilt, Forge and Fabric.
 
 ## [0.0.5] - 2020-12-14
 

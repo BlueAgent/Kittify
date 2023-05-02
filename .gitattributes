@@ -1,7 +1,10 @@
 *.bat text eol=crlf
 *.kts text eol=lf
 *.java text eol=lf
+*.json text eol=lf
+*.md text eol=lf
 *.properties text eol=lf
+*.toml text eol=lf
 
 # Disable autocrlf on generated files, they always generate with LF
 # Add any extra files or paths here to make git stop saying they

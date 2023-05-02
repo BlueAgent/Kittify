@@ -3,7 +3,9 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.fabricmc.loom.task.RemapJarTask
 
+val mod_version: String by project
 val minecraft_version: String by project
+val forge_loader_version: String by project
 val forge_version: String by project
 
 plugins {
@@ -37,6 +39,26 @@ dependencies {
     forge("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
     "common"(project(path = vanillaPath, configuration = "namedElements")) { isTransitive = false }
     "shadowCommon"(project(path = vanillaPath, configuration = "transformProductionForge")) { isTransitive = false }
+}
+
+tasks.named<ProcessResources>("processResources") {
+    inputs.property("mod_version", mod_version)
+    inputs.property("minecraft_version", minecraft_version)
+    inputs.property("forge_loader_version", forge_loader_version)
+    inputs.property("forge_version", forge_version)
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from(sourceSets["main"].resources.srcDirs) {
+        include("META-INF/mods.toml")
+        expand(
+            "mod_version" to mod_version,
+            "minecraft_version" to minecraft_version,
+            "forge_loader_version" to forge_loader_version,
+            "forge_version" to forge_version
+        )
+    }
+    from(sourceSets["main"].resources.srcDirs) {
+        exclude("META-INF/mods.toml")
+    }
 }
 
 tasks.named<ShadowJar>("shadowJar") {

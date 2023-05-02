@@ -6,4 +6,5 @@ There are no configs right now but might add them or just make the project open 
 
 ## Changes
 
+- [1.19.2](./projects/minecraft/v1.19.2/changes.md)
 - [1.12.2 Forge](./projects/minecraft/v1.12.2/forge/changes.md)

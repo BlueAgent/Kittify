@@ -3,6 +3,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.fabricmc.loom.task.RemapJarTask
 
+val mod_version: String by project
 val minecraft_version: String by project
 val fabric_loader_version: String by project
 val fabric_api_version: String by project
@@ -43,6 +44,26 @@ dependencies {
     "shadowCommon"(project(path = vanillaPath, configuration = "transformProductionFabric")) { isTransitive = false }
     "common"(project(path = quiltishPath, configuration = "namedElements")) { isTransitive = false }
     "shadowCommon"(project(path = quiltishPath, configuration = "transformProductionFabric")) { isTransitive = false }
+}
+
+tasks.named<ProcessResources>("processResources") {
+    inputs.property("mod_version", mod_version)
+    inputs.property("minecraft_version", minecraft_version)
+    inputs.property("fabric_loader_version", fabric_loader_version)
+    inputs.property("fabric_api_version", fabric_api_version)
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    from(sourceSets["main"].resources.srcDirs) {
+        include("quilt.mod.json")
+        expand(
+            "mod_version" to mod_version,
+            "minecraft_version" to minecraft_version,
+            "fabric_loader_version" to fabric_loader_version,
+            "fabric_api_version" to fabric_api_version
+        )
+    }
+    from(sourceSets["main"].resources.srcDirs) {
+        exclude("quilt.mod.json")
+    }
 }
 
 tasks.named<ShadowJar>("shadowJar") {

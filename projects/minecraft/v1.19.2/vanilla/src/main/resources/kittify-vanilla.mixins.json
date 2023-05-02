@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8.3",
+  "package": "kittify.vanilla.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "client": [
+  ],
+  "mixins": [
+    "LivingEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
