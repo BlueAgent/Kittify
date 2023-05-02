@@ -1,6 +1,6 @@
 # Changelog
 
-## [NEXT] - YYYY-MM-DD
+## [0.0.6] - 2023-05-02
 
 - Initial release of Kittify for Minecraft 1.19.2 on Quilt, Forge and Fabric.
 - Prevent tamed mobs from dying. (1.19.2)
