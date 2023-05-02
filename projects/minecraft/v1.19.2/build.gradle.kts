@@ -2,6 +2,7 @@
 
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.GenerateSourcesTask
+import org.gradle.util.Path
 
 val mod_id: String by project
 val minecraft_version: String by project
@@ -93,6 +94,15 @@ subprojects {
                 }
             genSources.setDependsOn(dependenciesWithoutGenSources + sequenceOf(genSourcesWithQuiltflower))
             // println(genSources.toString() + " (After): " + genSources.dependsOn.joinToString(", "))
+
+            val parentPath = Path.path(project.path).parent!!
+            val projectDependencies = when (project.name) {
+                "quiltish", "forge" -> setOf("vanilla")
+                "fabric", "quilt" -> setOf("vanilla", "quiltish")
+                else -> setOf()
+            }.map { project(parentPath.child(it).path!!) }
+
+            genSourcesWithQuiltflower.get().mustRunAfter(projectDependencies.map { it.tasks.named<GenerateSourcesTask>("genSourcesWithQuiltflower") })
         }
     }
 }
