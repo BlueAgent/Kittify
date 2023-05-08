@@ -24,15 +24,15 @@
     "depends": [
       {
         "id": "quilt_loader",
-        "versions": ">=${quilt_loader_version}"
+        "versions": "*"
       },
       {
         "id": "quilted_fabric_api",
-        "versions": ">=${quilted_fabric_api_version}"
+        "versions": "*"
       },
       {
         "id": "minecraft",
-        "versions": ">=${minecraft_version}"
+        "versions": "*"
       }
     ]
   },
