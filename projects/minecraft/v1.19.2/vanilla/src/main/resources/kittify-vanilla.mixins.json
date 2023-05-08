@@ -8,6 +8,7 @@
   "mixins": [
     "LivingEntityMixin"
   ],
+  "verbose": true,
   "injectors": {
     "defaultRequire": 1
   }
