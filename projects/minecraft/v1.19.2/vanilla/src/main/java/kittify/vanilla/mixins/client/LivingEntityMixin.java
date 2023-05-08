@@ -13,23 +13,21 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
-    private static final int IS_FALL_FLYING_FLAG = 7;
-
     public LivingEntityMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);
     }
 
     /**
-     * Allows Elytra flight to start and stop client-side.
+     * Allows Elytra Flight to start and stop client-side.
      */
-    @Inject(method = "updateFallFlying()V", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/Level;isClientSide:Z", opcode = Opcodes.GETFIELD, ordinal = 1))
-    private void kittify$updateFallFlying$isClientSide2(CallbackInfo ci, boolean isFallFlying) {
+    @Inject(method = "updateFallFlying()V", locals = LocalCapture.CAPTURE_FAILHARD, at = @At(value = "FIELD", target = "Lnet/minecraft/world/level/Level;isClientSide:Z", opcode = Opcodes.GETFIELD, ordinal = 1), require = 1)
+    private void kittify$updateFallFlying$isClientSide1(CallbackInfo ci, boolean isFallFlying) {
         if (this.level.isClientSide) {
             // Wish I could inject after the field access, instead of before without using a redirect. :(
             // It would let us not have to duplicate this.
             // I really don't like redirects.
             // Then again I guess there's not many people that are going to modify this field access anyway...
-            this.setSharedFlag(IS_FALL_FLYING_FLAG, isFallFlying);
+            this.setSharedFlag(FLAG_FALL_FLYING, isFallFlying);
         }
     }
 }

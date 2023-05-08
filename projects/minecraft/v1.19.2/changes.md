@@ -6,4 +6,5 @@
 
 ## Latency
 
-- Allows Elytra flight to start and stop client-side.
+- Allows Elytra Flight to start and stop client-side.
+- Allows using a firework client-side when in Elytra Flight.

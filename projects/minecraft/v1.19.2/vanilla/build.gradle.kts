@@ -8,6 +8,10 @@ architectury {
     common(enabled_platforms.split(","))
 }
 
+loom {
+    accessWidenerPath.set(file("src/main/resources/kittify-vanilla.accesswidener"))
+}
+
 dependencies {
     modImplementation("org.quiltmc:quilt-loader:${quilt_loader_version}")
 }

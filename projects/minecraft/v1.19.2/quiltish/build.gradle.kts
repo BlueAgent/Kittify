@@ -15,6 +15,10 @@ architectury {
     common(enabled_platforms.split(","))
 }
 
+loom {
+    accessWidenerPath.set(project(vanillaPath).loom.accessWidenerPath)
+}
+
 dependencies {
     modImplementation("org.quiltmc:quilt-loader:${quilt_loader_version}")
     modApi("org.quiltmc.quilted-fabric-api:quilted-fabric-api:${quilted_fabric_api_version}-${minecraft_version}")

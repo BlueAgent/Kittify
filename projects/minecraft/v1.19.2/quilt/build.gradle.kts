@@ -23,6 +23,10 @@ architectury {
     loader("quilt")
 }
 
+loom {
+    accessWidenerPath.set(project(vanillaPath).loom.accessWidenerPath)
+}
+
 configurations {
     val common = create("common")
     create("shadowCommon")

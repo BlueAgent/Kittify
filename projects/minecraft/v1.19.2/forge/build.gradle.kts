@@ -21,6 +21,17 @@ architectury {
     forge()
 }
 
+loom {
+    accessWidenerPath.set(project(vanillaPath).loom.accessWidenerPath)
+
+    forge {
+        convertAccessWideners.set(true)
+        extraAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
+
+        mixinConfig("kittify-vanilla.mixins.json")
+    }
+}
+
 configurations {
     val common = create("common")
     create("shadowCommon")
