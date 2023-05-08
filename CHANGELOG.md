@@ -1,5 +1,9 @@
 # Changelog
 
+## [NEXT] - YYYY-MM-DD
+
+- Allows Elytra flight to start and stop client-side. (1.19.2)
+
 ## [0.0.6] - 2023-05-02
 
 - Initial release of Kittify for Minecraft 1.19.2 on Quilt, Forge and Fabric.

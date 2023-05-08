@@ -4,6 +4,7 @@
   "package": "kittify.vanilla.mixins",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "client.LivingEntityMixin"
   ],
   "mixins": [
     "LivingEntityMixin"
