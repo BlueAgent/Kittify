@@ -21,11 +21,15 @@ public abstract class LivingEntityMixin extends Entity {
     @Shadow
     public abstract void setHealth(float health);
 
+    @Shadow
+    protected abstract void playHurtSound(DamageSource source);
+
     @SuppressWarnings("ConstantConditions")
     @Inject(method = "checkTotemDeathProtection(Lnet/minecraft/world/damagesource/DamageSource;)Z", at = @At("RETURN"), cancellable = true)
-    private void kittify$checkTotemDeathProtection$beforeDeath(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
-        if (MixinHooks.shouldPreventDeath((LivingEntity) (Entity) this, damageSource)) {
+    private void kittify$checkTotemDeathProtection$after(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
+        if (!cir.getReturnValueZ() && MixinHooks.shouldPreventDeath((LivingEntity) (Entity) this, damageSource, false)) {
             this.setHealth(1.0F);
+            playHurtSound(damageSource);
             cir.setReturnValue(true);
         }
     }
