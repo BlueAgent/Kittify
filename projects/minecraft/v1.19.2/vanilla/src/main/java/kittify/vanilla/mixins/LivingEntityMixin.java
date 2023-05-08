@@ -12,7 +12,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(LivingEntity.class)
+/**
+ * Priority 900 to make this death prevention work on Quilt in dev.
+ * Reason why is `org.quiltmc.qsl.entity_events.mixin.LivingEntityMixin#invokeTryReviveAfterTotemEvent` is setting the return value to false.
+ */
+@Mixin(value = LivingEntity.class, priority = 900)
 public abstract class LivingEntityMixin extends Entity {
     public LivingEntityMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);
