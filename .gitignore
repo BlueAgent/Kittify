@@ -28,3 +28,6 @@ forge*changelog.txt
 
 # Generated resources cache
 .cache
+
+# Architectury
+.architectury-transformer

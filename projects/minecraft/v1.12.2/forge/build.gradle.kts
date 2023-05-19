@@ -3,6 +3,7 @@
 import net.kyori.blossom.BlossomExtension
 import net.minecraftforge.gradle.userdev.UserDevExtension
 
+val dev_username: String by project
 val mod_id: String by project
 val mod_version: String by project
 val mc_version: String by project
@@ -85,7 +86,7 @@ configure<UserDevExtension> {
             }
         }
         create("client") {
-            args("--username", "KittifyDev")
+            args("--username", dev_username)
             workingDirectory(file("run"))
             property("forge.logging.markers", "SCAN,REGISTRIES,REGISTRYDUMP")
             property("forge.logging.console.level", "debug")

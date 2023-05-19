@@ -3,6 +3,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.fabricmc.loom.task.RemapJarTask
 
+val dev_username: String by project
 val mod_version: String by project
 val minecraft_version: String by project
 val forge_loader_version: String by project
@@ -23,6 +24,12 @@ architectury {
 
 loom {
     accessWidenerPath.set(project(vanillaPath).loom.accessWidenerPath)
+    runs {
+        named("client") {
+            programArg("--username")
+            programArg(dev_username)
+        }
+    }
 
     forge {
         convertAccessWideners.set(true)
@@ -73,11 +80,13 @@ tasks.named<ProcessResources>("processResources") {
 }
 
 tasks.named<ShadowJar>("shadowJar") {
+    exclude("architectury.common.json")
     configurations = listOf(project.configurations["shadowCommon"])
     archiveClassifier.set("dev-shadow")
 }
 
 tasks.named<RemapJarTask>("remapJar") {
+    injectAccessWidener.set(true)
     val shadowJar = tasks.named<ShadowJar>("shadowJar").get()
     inputFile.set(shadowJar.archiveFile)
     dependsOn(shadowJar)
