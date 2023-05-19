@@ -4,6 +4,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import net.fabricmc.loom.task.RemapJarTask
 
 val dev_username: String by project
+val dev_simulated_latency: String by project
 val mod_version: String by project
 val minecraft_version: String by project
 val forge_loader_version: String by project
@@ -28,6 +29,9 @@ loom {
         named("client") {
             programArg("--username")
             programArg(dev_username)
+        }
+        named("server") {
+            property("kittify.simulated_latency", dev_simulated_latency)
         }
     }
 

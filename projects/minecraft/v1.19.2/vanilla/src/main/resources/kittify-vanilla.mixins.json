@@ -4,12 +4,13 @@
   "package": "kittify.vanilla.mixins",
   "compatibilityLevel": "JAVA_17",
   "client": [
-    "client.SynchedEntityDataMixin",
     "client.FireworkRocketItemMixin",
-    "client.LivingEntityMixin"
+    "client.LivingEntityMixin",
+    "client.SynchedEntityDataMixin"
   ],
   "mixins": [
-    "LivingEntityMixin"
+    "LivingEntityMixin",
+    "ServerConnectionListenerMixin"
   ],
   "verbose": true,
   "injectors": {

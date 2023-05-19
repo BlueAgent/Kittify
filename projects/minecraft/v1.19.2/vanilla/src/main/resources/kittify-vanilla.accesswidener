@@ -1,3 +1,4 @@
 accessWidener v2 named
+accessible class net/minecraft/server/network/ServerConnectionListener$LatencySimulator
 accessible field net/minecraft/world/entity/Entity DATA_SHARED_FLAGS_ID Lnet/minecraft/network/syncher/EntityDataAccessor;
 accessible field net/minecraft/world/entity/Entity FLAG_FALL_FLYING I
