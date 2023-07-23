@@ -38,14 +38,14 @@ pluginManagement {
             url = uri("https://maven.architectury.dev")
             content {
                 includeGroupByRegex("""^architectury-plugin(?:\..+$|$)""")
-                includeGroupByRegex("""^dev.architectury(?:\..+$|$)""")
+                includeGroupByRegex("""^dev\.architectury(?:\..+$|$)""")
             }
         }
         maven {
             name = "Quilt"
             url = uri("https://maven.quiltmc.org/repository/release")
             content {
-                includeGroupByRegex("""^org.quiltmc(?:\..+$|$)""")
+                includeGroupByRegex("""^org\.quiltmc(?:\..+$|$)""")
             }
         }
         maven {
@@ -54,14 +54,14 @@ pluginManagement {
             content {
                 includeGroup("de.oceanlabs.mcp")
                 includeGroup("net.minecraft")
-                includeGroupByRegex("""^net.minecraftforge(?:\..+$|$)""")
+                includeGroupByRegex("""^net\.minecraftforge(?:\..+$|$)""")
             }
         }
         maven {
             name = "Fabric"
             url = uri("https://maven.fabricmc.net")
             content {
-                includeGroupByRegex("""^net.fabricmc(?:\..+$|$)""")
+                includeGroupByRegex("""^net\.fabricmc(?:\..+$|$)""")
             }
         }
         gradlePluginPortal {

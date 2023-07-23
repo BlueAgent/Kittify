@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "kittify:item/purrfect_paw_of_pouty_protection"
+  }
+}

@@ -38,7 +38,7 @@ subprojects {
                 }
             }
             filter {
-                includeGroupByRegex("""^org.parchmentmc(?:\..+$|$)""")
+                includeGroupByRegex("""^org\.parchmentmc(?:\..+$|$)""")
             }
         }
         exclusiveContent {
@@ -49,7 +49,7 @@ subprojects {
                 }
             }
             filter {
-                includeGroupByRegex("""^org.quiltmc(?:\..+$|$)""")
+                includeGroupByRegex("""^org\.quiltmc(?:\..+$|$)""")
             }
         }
     }
