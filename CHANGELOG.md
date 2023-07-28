@@ -5,6 +5,7 @@
 - Allows Elytra Flight to start and stop client-side. (1.19.2)
 - Allows using a firework client-side when in Elytra Flight. (1.19.2)
 - Added Purrfect Paw of Pouty Protection. (1.19.2)
+- Added Gentle Riding Crop. (1.19.2)
 
 ## [0.0.6] - 2023-05-02
 

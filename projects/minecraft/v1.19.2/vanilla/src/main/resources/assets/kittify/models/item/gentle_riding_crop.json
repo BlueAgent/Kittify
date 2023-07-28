@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "kittify:item/gentle_riding_crop"
+  }
+}
