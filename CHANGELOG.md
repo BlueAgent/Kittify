@@ -6,7 +6,9 @@
 - Allows using a firework client-side when in Elytra Flight. (1.19.2)
 - Added Purrfect Paw of Pouty Protection. (1.19.2)
 - Added Gentle Riding Crop. (1.19.2)
-- Added Cute Collar. (1.19.2)
+- Added Cute Collar (trinket/curio). (1.19.2)
+    - 2x Movement Speed.
+    - Does not drop on death.
 
 ## [0.0.6] - 2023-05-02
 

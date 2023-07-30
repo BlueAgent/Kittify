@@ -1,6 +1,7 @@
 package kittify.vanilla.common.registry;
 
 import kittify.Kittify;
+import kittify.vanilla.common.integration.trinkets.KittifyTrinketsIntegration;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -36,6 +37,10 @@ public class KittifyItems {
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
+        }
+
+        if (Kittify.INSTANCE.isModLoaded(Kittify.TRINKETS_MOD_ID)) {
+            KittifyTrinketsIntegration.afterRegisterItems();
         }
     }
 }

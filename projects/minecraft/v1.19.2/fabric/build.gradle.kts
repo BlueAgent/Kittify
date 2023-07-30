@@ -9,6 +9,7 @@ val mod_version: String by project
 val minecraft_version: String by project
 val fabric_loader_version: String by project
 val fabric_api_version: String by project
+val trinkets_version: String by project
 
 plugins {
     id("com.github.johnrengelman.shadow")
@@ -59,6 +60,10 @@ dependencies {
     "shadowCommon"(project(path = vanillaPath, configuration = "transformProductionFabric")) { isTransitive = false }
     "common"(project(path = quiltishPath, configuration = "namedElements")) { isTransitive = false }
     "shadowCommon"(project(path = quiltishPath, configuration = "transformProductionFabric")) { isTransitive = false }
+    modImplementation("dev.emi:trinkets:${trinkets_version}") {
+        exclude("net.fabricmc")
+        exclude("net.fabricmc.fabric-api")
+    }
 }
 
 tasks.named<ProcessResources>("processResources") {

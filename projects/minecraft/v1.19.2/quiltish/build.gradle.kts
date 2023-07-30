@@ -6,6 +6,7 @@ val enabled_platforms: String by project
 val minecraft_version: String by project
 val quilt_loader_version: String by project
 val quilted_fabric_api_version: String by project
+val trinkets_version: String by project
 
 val parentPath = Path.path(project.path).parent!!
 val vanillaPath = parentPath.child("vanilla").path!!
@@ -23,4 +24,5 @@ dependencies {
     modImplementation("org.quiltmc:quilt-loader:${quilt_loader_version}")
     modApi("org.quiltmc.quilted-fabric-api:quilted-fabric-api:${quilted_fabric_api_version}-${minecraft_version}")
     compileOnly(project(path = vanillaPath, configuration = "namedElements")) { isTransitive = false }
+    modCompileOnly("dev.emi:trinkets:${trinkets_version}")
 }
