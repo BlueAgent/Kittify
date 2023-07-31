@@ -1,10 +1,10 @@
 package kittify.vanilla.common.integration.curios;
 
 import com.google.common.collect.Multimap;
+import kittify.vanilla.common.integration.accessories.CuteCollarAccessory;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.curios.api.SlotContext;
@@ -27,7 +27,7 @@ public class CuteCollarCurio implements ICurio {
     @Override
     public Multimap<Attribute, AttributeModifier> getAttributeModifiers(SlotContext slotContext, UUID uuid) {
         Multimap<Attribute, AttributeModifier> modifiers = ICurio.super.getAttributeModifiers(slotContext, uuid);
-        modifiers.put(Attributes.MOVEMENT_SPEED, new AttributeModifier(uuid, "kittify:cute_collar_speed", 2, AttributeModifier.Operation.MULTIPLY_TOTAL));
+        CuteCollarAccessory.addModifiers(modifiers, uuid);
         return modifiers;
     }
 
