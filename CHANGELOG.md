@@ -4,12 +4,13 @@
 
 - Allows Elytra Flight to start and stop client-side. (1.19.2)
 - Allows using a firework client-side when in Elytra Flight. (1.19.2)
+- Added Headband and Collar slots (Trinkets/Curios).
 - Added Purrfect Paw of Pouty Protection. (1.19.2)
 - Added Gentle Riding Crop. (1.19.2)
-- Added Cute Collar (trinket/curio). (1.19.2)
+- Added Cute Collar accessory. (1.19.2)
     - 2x Movement Speed.
     - Does not drop on death.
-- Added EXE-Arc (trinket/curio). (1.19.2)
+- Added EXE-Arc accessory. (1.19.2)
     - Heals to full in 20 seconds.
     - Does not drop on death.
 
