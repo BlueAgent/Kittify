@@ -9,5 +9,6 @@ public class KittifyTrinketsIntegration {
 
     public static void afterRegisterItems() {
         TrinketsApi.registerTrinket(KittifyItems.CUTE_COLLAR, new CuteCollarTrinket());
+        TrinketsApi.registerTrinket(KittifyItems.EXE_ARC, new EXEArcTrinket());
     }
 }

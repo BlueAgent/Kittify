@@ -2,7 +2,6 @@ package kittify.forge;
 
 import kittify.Kittify;
 import kittify.forge.client.KittifyForgeClient;
-import kittify.vanilla.common.integration.curios.CuteCollarCurio;
 import kittify.vanilla.common.integration.curios.KittifyCuriosIntegration;
 import kittify.vanilla.common.registry.KittifyItems;
 import net.minecraft.core.Direction;
@@ -71,8 +70,9 @@ public class KittifyForge extends Kittify {
     public void onAttachCapabilitiesToItemStack(AttachCapabilitiesEvent<ItemStack> event) {
         if (isModLoaded(CURIOS_MOD_ID)) {
             ItemStack stack = event.getObject();
-            if (stack.getItem() == KittifyItems.CUTE_COLLAR) {
-                LazyOptional<ICurio> lazyCap = LazyOptional.of(() -> new CuteCollarCurio(stack));
+            ICurio curioCapability = KittifyCuriosIntegration.createCapability(stack);
+            if (curioCapability != null) {
+                LazyOptional<ICurio> lazyCap = LazyOptional.of(() -> curioCapability);
 
                 ICapabilityProvider provider = new ICapabilityProvider() {
                     @Override

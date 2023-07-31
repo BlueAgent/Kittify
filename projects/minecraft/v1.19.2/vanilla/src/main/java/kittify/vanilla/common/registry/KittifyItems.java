@@ -18,6 +18,7 @@ import java.util.function.BiConsumer;
 @SuppressWarnings("unused")
 public class KittifyItems {
     public static final Item CUTE_COLLAR = new Item(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).stacksTo(1));
+    public static final Item EXE_ARC = new Item(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).stacksTo(1));
     public static final Item GENTLE_RIDING_CROP = new Item(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).stacksTo(1));
     public static final Item PURRFECT_PAW_OF_POUTY_PROTECTION = new Item(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).stacksTo(1));
     private static final Logger LOG = LogManager.getLogger();

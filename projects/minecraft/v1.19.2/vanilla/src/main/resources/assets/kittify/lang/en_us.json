@@ -1,7 +1,10 @@
 {
-  "curios.identifier.collar": "Collar",
   "item.kittify.cute_collar": "Cute Collar",
+  "item.kittify.exe_arc": "EXE-Arc",
   "item.kittify.gentle_riding_crop": "Gentle Riding Crop",
   "item.kittify.purrfect_paw_of_pouty_protection": "Purrfect Paw of Pouty Protection",
-  "trinkets.slot.chest.collar": "Collar"
+  "trinkets.slot.head.headband": "Headband",
+  "curios.identifier.headband": "Headband",
+  "trinkets.slot.chest.collar": "Collar",
+  "curios.identifier.collar": "Collar"
 }
