@@ -5,6 +5,8 @@
   "item.kittify.purrfect_paw_of_pouty_protection": "Purrfect Paw of Pouty Protection",
   "trinkets.slot.head.headband": "Headband",
   "curios.identifier.headband": "Headband",
+  "curios.modifiers.headband": "When worn as headband:",
   "trinkets.slot.chest.collar": "Collar",
-  "curios.identifier.collar": "Collar"
+  "curios.identifier.collar": "Collar",
+  "curios.modifiers.collar": "When worn as collar:"
 }
